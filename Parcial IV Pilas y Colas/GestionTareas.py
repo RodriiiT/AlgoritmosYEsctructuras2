@@ -32,6 +32,7 @@ class Proyecto:
         self.empresa = empresa
         self.gerente = gerente
         self.equipo = equipo
+        self.tareas = []
         
     def agregar_tarea(self, tarea):
         self.tareas.append(tarea)
@@ -97,6 +98,49 @@ de las tareas próximas a vencer.
 
 
 #3.- Módulo de Reportes
+class Reportes:
+    
+    def consultar_tareas_por_estado(proyectos, estado):
+        tareas = []
+        for proyecto in proyectos:
+            for tarea in proyecto.tareas:
+                if tarea.estado_t == estado:
+                    tareas.append(tarea)
+        return tareas
+
+    
+    def filtrar_tareas_por_fecha(proyectos, fecha_inicio=None, fecha_vencimiento=None):
+        tareas = []
+        for proyecto in proyectos:
+            for tarea in proyecto.tareas:
+                if ((fecha_inicio is None or tarea.fecha_inicio_t >= fecha_inicio) and 
+                    (fecha_vencimiento is None or tarea.fecha_vencimiento_t <= fecha_vencimiento)):
+                    tareas.append(tarea)
+        return tareas
+
+  
+    def filtrar_proyectos(proyectos, fecha_inicio=None, fecha_vencimiento=None, estado=None, empresa=None):
+        proyectos_filtrados = []
+        for proyecto in proyectos:
+            if ((fecha_inicio is None or proyecto.fecha_inicio >= fecha_inicio) and 
+                (fecha_vencimiento is None or proyecto.fecha_vencimiento <= fecha_vencimiento) and 
+                (estado is None or proyecto.estado_act == estado) and 
+                (empresa is None or proyecto.empresa == empresa)):
+                proyectos_filtrados.append(proyecto)
+        return proyectos_filtrados
+
+   
+    def listar_subtareas(proyectos, proyecto_id=None, proyecto_nombre=None):
+        resultado = []
+        for proyecto in proyectos:
+            if proyecto_id is not None and proyecto.ide != proyecto_id:
+                continue
+            if proyecto_nombre is not None and proyecto.nombre != proyecto_nombre:
+                continue
+            for tarea in proyecto.tareas:
+                subtareas_info = [{"id": subtarea.id_s, "nombre": subtarea.nombre_s, "descripcion": subtarea.descripcion_s, "estado": subtarea.estado_s} for subtarea in tarea.subtareas]
+                resultado.append({"tarea_id": tarea.id_t, "tarea_nombre": tarea.nombre_t, "subtareas": subtareas_info})
+        return resultado
 
 
 
@@ -145,8 +189,111 @@ class Carga:
                     proyecto.agregar_tarea(tarea)
                 proyectos.append(proyecto)
         return proyectos
-    
-    
+
 # Cargar datos desde un archivo JSON
+"""
 prueba = Carga("datos_prueba2.json")
 proyectos = prueba.cargar_datos_desde_json()
+"""
+
+# Creamos algunos proyectos, tareas y subtareas para realizar pruebas
+
+proyecto1 = Proyecto(
+    ide=1,
+    nombre="Proyecto 1",
+    descripcion="Descripción del Proyecto 1",
+    fecha_inicio=datetime(2023, 1, 1),
+    fecha_vencimiento=datetime(2023, 12, 31),
+    estado_act="activo",
+    empresa="Empresa 1",
+    gerente="Gerente 1",
+    equipo=["Equipo 1"]
+)
+
+tarea1 = Tarea(
+    id_t=1,
+    nombre_t="Tarea 1",
+    empresa_cliente="Empresa Cliente 1",
+    descripcion_t="Descripción de la Tarea 1",
+    fecha_inicio_t=datetime(2023, 1, 1),
+    fecha_vencimiento_t=datetime(2023, 6, 30),
+    estado_t="pendiente",
+    porcentaje=50
+)
+
+subtarea1 = Subtarea(
+    id_s=1,
+    nombre_s="Subtarea 1",
+    descripcion_s="Descripción de la Subtarea 1",
+    estado_s="completada"
+)
+subtarea2 = Subtarea(
+    id_s=1,
+    nombre_s="Subtarea 2",
+    descripcion_s="Descripción de la Subtarea 2",
+    estado_s="completada"
+)
+
+# Agregar subtarea a la tarea
+tarea1.agregar_subtarea(subtarea1)
+tarea1.agregar_subtarea(subtarea2)
+
+# Agregar tarea al proyecto
+proyecto1.agregar_tarea(tarea1)
+
+# Crear un segundo proyecto para pruebas
+proyecto2 = Proyecto(
+    ide=2,
+    nombre="Proyecto 2",
+    descripcion="Descripción del Proyecto 2",
+    fecha_inicio=datetime(2023, 2, 1),
+    fecha_vencimiento=datetime(2023, 11, 30),
+    estado_act="completado",
+    empresa="Empresa 2",
+    gerente="Gerente 2",
+    equipo=["Equipo 2"]
+)
+
+tarea2 = Tarea(
+    id_t=2,
+    nombre_t="Tarea 2",
+    empresa_cliente="Empresa Cliente 2",
+    descripcion_t="Descripción de la Tarea 2",
+    fecha_inicio_t=datetime(2023, 3, 1),
+    fecha_vencimiento_t=datetime(2023, 8, 30),
+    estado_t="en progreso",
+    porcentaje=75
+)
+
+# Agregar tarea al proyecto
+proyecto2.agregar_tarea(tarea2)
+
+# Lista de proyectos para pruebas
+proyectos = [proyecto1, proyecto2]
+
+# Realizamos pruebas de las funciones de reporte
+# 1. Consulta de Tareas por Estado
+tareas_pendientes = Reportes.consultar_tareas_por_estado(proyectos, "pendiente")
+print("Tareas Pendientes:")
+for tarea in tareas_pendientes:
+    print(f"- {tarea.nombre_t}: {tarea.descripcion_t}")
+
+# 2. Filtrado por Fecha
+tareas_por_fecha = Reportes.filtrar_tareas_por_fecha(proyectos, fecha_inicio=datetime(2023, 1, 1), fecha_vencimiento=datetime(2023, 6, 30))
+print("\nTareas entre 2023-01-01 y 2023-06-30:")
+for tarea in tareas_por_fecha:
+    print(f"- {tarea.nombre_t}: {tarea.descripcion_t}")
+
+# 3. Filtrado de Proyectos
+proyectos_filtrados = Reportes.filtrar_proyectos(proyectos, estado="activo")
+print("\nProyectos Activos:")
+for proyecto in proyectos_filtrados:
+    print(f"- {proyecto.nombre}: {proyecto.descripcion}")
+
+# 4. Listar Subtareas
+subtareas_listadas = Reportes.listar_subtareas(proyectos, proyecto_id=1)
+print("\nSubtareas del Proyecto 1:")
+for tarea in subtareas_listadas:
+    print(f"Tarea {tarea['tarea_id']} - {tarea['tarea_nombre']}:")
+    for subtarea in tarea["subtareas"]:
+        print(f"  - {subtarea['nombre']}: {subtarea['descripcion']}")

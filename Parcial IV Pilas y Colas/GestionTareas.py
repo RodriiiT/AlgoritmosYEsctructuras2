@@ -108,7 +108,6 @@ class Reportes:
                     tareas.append(tarea)
         return tareas
 
-    
     def filtrar_tareas_por_fecha(proyectos, fecha_inicio=None, fecha_vencimiento=None):
         tareas = []
         for proyecto in proyectos:
@@ -118,7 +117,6 @@ class Reportes:
                     tareas.append(tarea)
         return tareas
 
-  
     def filtrar_proyectos(proyectos, fecha_inicio=None, fecha_vencimiento=None, estado=None, empresa=None):
         proyectos_filtrados = []
         for proyecto in proyectos:
@@ -129,7 +127,6 @@ class Reportes:
                 proyectos_filtrados.append(proyecto)
         return proyectos_filtrados
 
-   
     def listar_subtareas(proyectos, proyecto_id=None, proyecto_nombre=None):
         resultado = []
         for proyecto in proyectos:
@@ -141,7 +138,6 @@ class Reportes:
                 subtareas_info = [{"id": subtarea.id_s, "nombre": subtarea.nombre_s, "descripcion": subtarea.descripcion_s, "estado": subtarea.estado_s} for subtarea in tarea.subtareas]
                 resultado.append({"tarea_id": tarea.id_t, "tarea_nombre": tarea.nombre_t, "subtareas": subtareas_info})
         return resultado
-
 
 
 #4.- Módulo de importación y exportación de datos
@@ -189,16 +185,207 @@ class Carga:
                     proyecto.agregar_tarea(tarea)
                 proyectos.append(proyecto)
         return proyectos
-
+    
+def menu():
+    cent = input("¿Desea continuar? (s/n): ")
+    while cent.lower() == 's':
+        print("\n****Gestión de Proyectos y Tareas****")
+        print("\nMenú de opciones:")
+        print("1.- Crear un proyecto")
+        print("2.- Modificar proyecto")
+        print("3.- Consultar proyecto")
+        print("4.- Eliminar proyecto")
+        print("5.- Listar proyecto")
+        print("6.- Salir")
+        
+        opcion = input("\nSeleccione una opción: ")
+        
+        if opcion == '1':
+            print("\nOpción 1 seleccionada (Crear un proyecto)")
+            id_opc = input("Ingrese el id del proyecto: ")
+            nombre_opc = input("Ingrese el nombre del proyecto: ")
+            descripcion_opc = input("Ingrese la descripción del proyecto: ")
+            fecha_inicio_opc = input("Ingrese la fecha de inicio del proyecto: ")
+            fecha_vencimiento_opc = input("Ingrese la fecha de vencimiento del proyecto: ")
+            estado_act_opc = input("Ingrese el estado actual del proyecto: ")
+            empresa_opc = input("Ingrese la empresa del proyecto: ")
+            gerente_opc = input("Ingrese el gerente del proyecto: ")
+            equipo_opc = input("Ingrese el equipo del proyecto: ")
+        
+        elif opcion == '2':
+            print("\nOpción 2 seleccionada (Modificar proyecto)")
+            criterio_busqueda = input("Indique el criterio de busqueda del proyecto \n(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo): ")
+            
+            if criterio_busqueda.lower() == 'id':
+                print("\nBuscando proyecto por id")
+                buscar_id = input("Introduzca el id del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'nombre':
+                print("\nBuscando proyecto por nombre")
+                buscar_nombre = input("Introduzca el nombre del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'descripcion':
+                print("\nBuscando proyecto por descripción")
+                buscar_descripcion = input("Introduzca la descripción del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_inicio':
+                print("\nBuscando proyecto por fecha_inicio")
+                buscar_fecha_i = input("Introduzca la fecha de inicio del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_vencimiento':
+                print("\nBuscando proyecto por fecha_vencimiento")
+                buscar_fecha_v = input("Introduzca la fecha de vencimiento del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'estado_actual':
+                print("\nBuscando proyecto por estado_actual")
+                buscar_estado_act = input("Introduzca el estado actual del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'empresa':
+                print("\nBuscando proyecto por empresa")
+                buscar_empresa = input("Introduzca la empresa del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'gerente':
+                print("\nBuscando proyecto por gerente")
+                buscar_gerente = input("Introduzca el gerente del proyecto a modificar: ")
+                
+            elif criterio_busqueda.lower() == 'equipo':
+                print("\nBuscando proyecto por equipo")
+                buscar_equipo= input("Introduzca el equipo del proyecto a modificar: ")
+                
+                
+        elif opcion == '3':
+            print("\nOpción 3 seleccionada (Consultar proyecto)")
+            criterio_busqueda = input("Indique el criterio de busqueda del proyecto \n(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo): ")
+            
+            if criterio_busqueda.lower() == 'id':
+                print("\nBuscando proyecto por id")
+                buscar_id = input("Introduzca el id del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'nombre':
+                print("\nBuscando proyecto por nombre")
+                buscar_nombre = input("Introduzca el nombre del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'descripcion':
+                print("\nBuscando proyecto por descripción")
+                buscar_descripcion = input("Introduzca la descripción del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_inicio':
+                print("\nBuscando proyecto por fecha_inicio")
+                buscar_fecha_i = input("Introduzca la fecha de inicio del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_vencimiento':
+                print("\nBuscando proyecto por fecha_vencimiento")
+                buscar_fecha_v = input("Introduzca la fecha de vencimiento del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'estado_actual':
+                print("\nBuscando proyecto por estado_actual")
+                buscar_estado_act = input("Introduzca el estado actual del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'empresa':
+                print("\nBuscando proyecto por empresa")
+                buscar_empresa = input("Introduzca la empresa del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'gerente':
+                print("\nBuscando proyecto por gerente")
+                buscar_gerente = input("Introduzca el gerente del proyecto a consultar: ")
+                
+            elif criterio_busqueda.lower() == 'equipo':
+                print("\nBuscando proyecto por equipo")
+                buscar_equipo= input("Introduzca el equipo del proyecto a consultar: ")
+                
+        elif opcion == '4':
+            print("\nOpción 4 seleccionada (Eliminar proyecto)")
+            criterio_busqueda = input("Indique el criterio de busqueda del proyecto \n(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo): ")
+            
+            if criterio_busqueda.lower() == 'id':
+                print("\nBuscando proyecto por id")
+                buscar_id = input("Introduzca el id del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'nombre':
+                print("\nBuscando proyecto por nombre")
+                buscar_nombre = input("Introduzca el nombre del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'descripcion':
+                print("\nBuscando proyecto por descripción")
+                buscar_descripcion = input("Introduzca la descripción del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_inicio':
+                print("\nBuscando proyecto por fecha_inicio")
+                buscar_fecha_i = input("Introduzca la fecha de inicio del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_vencimiento':
+                print("\nBuscando proyecto por fecha_vencimiento")
+                buscar_fecha_v = input("Introduzca la fecha de vencimiento del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'estado_actual':
+                print("\nBuscando proyecto por estado_actual")
+                buscar_estado_act = input("Introduzca el estado actual del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'empresa':
+                print("\nBuscando proyecto por empresa")
+                buscar_empresa = input("Introduzca la empresa del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'gerente':
+                print("\nBuscando proyecto por gerente")
+                buscar_gerente = input("Introduzca el gerente del proyecto a eliminar: ")
+                
+            elif criterio_busqueda.lower() == 'equipo':
+                print("\nBuscando proyecto por equipo")
+                buscar_equipo= input("Introduzca el equipo del proyecto a eliminar: ")
+                
+        elif opcion == '5':
+            print("\nOpción 5 seleccionada (Listar proyecto)")
+            criterio_busqueda = input("Indique el criterio de busqueda del proyecto \n(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo): ")
+            
+            if criterio_busqueda.lower() == 'id':
+                print("\nBuscando proyecto por id")
+                buscar_id = input("Introduzca el id del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'nombre':
+                print("\nBuscando proyecto por nombre")
+                buscar_nombre = input("Introduzca el nombre del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'descripcion':
+                print("\nBuscando proyecto por descripción")
+                buscar_descripcion = input("Introduzca la descripción del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_inicio':
+                print("\nBuscando proyecto por fecha_inicio")
+                buscar_fecha_i = input("Introduzca la fecha de inicio del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'fecha_vencimiento':
+                print("\nBuscando proyecto por fecha_vencimiento")
+                buscar_fecha_v = input("Introduzca la fecha de vencimiento del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'estado_actual':
+                print("\nBuscando proyecto por estado_actual")
+                buscar_estado_act = input("Introduzca el estado actual del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'empresa':
+                print("\nBuscando proyecto por empresa")
+                buscar_empresa = input("Introduzca la empresa del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'gerente':
+                print("\nBuscando proyecto por gerente")
+                buscar_gerente = input("Introduzca el gerente del proyecto a listar: ")
+                
+            elif criterio_busqueda.lower() == 'equipo':
+                print("\nBuscando proyecto por equipo")
+                buscar_equipo= input("Introduzca el equipo del proyecto a listar: ")
+            
+        elif opcion == '6':
+            cent = input("¿Desea continuar? (s/n): ")
+    
+    
 # Cargar datos desde un archivo JSON
-"""
-prueba = Carga("datos_prueba2.json")
+prueba = Carga("datos_prueba.json")
 proyectos = prueba.cargar_datos_desde_json()
-"""
+
+menu()
 
 # Creamos algunos proyectos, tareas y subtareas para realizar pruebas
 
-proyecto1 = Proyecto(
+"""proyecto1 = Proyecto(
     ide=1,
     nombre="Proyecto 1",
     descripcion="Descripción del Proyecto 1",
@@ -297,3 +484,4 @@ for tarea in subtareas_listadas:
     print(f"Tarea {tarea['tarea_id']} - {tarea['tarea_nombre']}:")
     for subtarea in tarea["subtareas"]:
         print(f"  - {subtarea['nombre']}: {subtarea['descripcion']}")
+"""

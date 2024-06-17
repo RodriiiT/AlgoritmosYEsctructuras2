@@ -20,6 +20,8 @@ para poder gestionar sus respectivas tareas
 
 import json
 from datetime import datetime
+from datetime import timedelta
+from collections import deque
 
 class Proyecto:
     def __init__(self, ide, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_act, empresa, gerente, equipo):
@@ -57,6 +59,7 @@ class Tarea:
         self.estado_t = estado_t
         self.porcentaje = porcentaje
         self.subtareas = []
+        self.siguiente = None
 
     def agregar_subtarea(self, subtarea):
         self.subtareas.append(subtarea)
@@ -71,32 +74,152 @@ class Subtarea:
 
 
 #2.- Módulo de Gestión de Tareas y Prioridades
-"""
-Cada proyecto deberá contener una lista de tareas(id, nombre, empresa
-cliente,descripción, fecha de inicio, fecha de vencimiento, estado actual,
-porcentaje) y cada tarea una lista de sub tareas.
-Los usuarios pueden agregar nuevas tareas al final de la lista de tareas de un
-proyecto o insertar tareas en posiciones específicas. Las operaciones disponibles
-incluyen eliminar tareas de la lista, buscar tareas por nombre u otros criterios, y
-actualizar la información de las tareas existentes.
+class ListaEnlazadaTareas:
+    def __init__(self):
+        self.cabeza = None
 
-Se deberá utilizar una pila para almacenar las tareas prioritarias de cada
-proyecto. Las tareas se insertan en la pila de acuerdo con su prioridad, de modo que
-la tarea más prioritaria esté en la cima de la pila. Los usuarios pueden agregar
-nuevas tareas prioritarias, eliminar tareas prioritarias de la cima de la pila y consultar
-la tarea más prioritaria sin eliminarla y mostrar el tiempo total de las tareas
-prioritarias.
+    def agregar_tarea(self, id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje):
+        nuevo_nodo = Tarea(id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
 
-Se deberá utilizar una cola para almacenar las tareas que están próximas a
-su fecha de vencimiento. Las tareas se agregan a la cola a medida que se acerca su
-fecha de vencimiento, de modo que la tarea más próxima a vencer esté al frente de
-la cola. Los usuarios pueden agregar nuevas tareas a la cola, eliminar tareas de la
-parte delantera de la cola cuando se completen antes de la fecha de vencimiento y
-consultar la tarea que está próxima a vencer sin eliminarla y mostrar el tiempo total
-de las tareas próximas a vencer.
-"""
+    def insertar_al_principio(self, id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje):
+        nuevo_nodo = Tarea(id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
+        nuevo_nodo.siguiente = self.cabeza
+        self.cabeza = nuevo_nodo
+    
+    def mostrar_tareas(self):
+        actual = self.cabeza
+        while actual:
+            print("Nombre:", actual.nombre_t)
+            print()
+            actual = actual.siguiente
 
+    def buscar_tarea(self, nombre):
+        actual = self.cabeza
+        while actual:
+            if actual.nombre_t == nombre:
+                return True
+            actual = actual.siguiente
+        return False
 
+    def eliminar_tarea(self, nombre):
+        if not self.cabeza:
+            return
+        if self.cabeza.nombre_t == nombre:
+            self.cabeza = self.cabeza.siguiente
+            return
+        anterior = None
+        actual = self.cabeza
+        while actual and actual.nombre_t != nombre:
+            anterior = actual
+            actual = actual.siguiente
+        if actual:
+            anterior.siguiente = actual.siguiente
+
+    def modificar_tarea(self, nombre_antiguo, id_t, nuevo_nombre, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje):
+        actual = self.cabeza
+        while actual:
+            if actual.nombre_t == nombre_antiguo:
+                actual.id_t = id_t
+                actual.nombre_t = nuevo_nombre
+                actual.empresa_cliente = empresa_cliente
+                actual.descripcion_t = descripcion_t
+                actual.fecha_inicio_t = fecha_inicio_t
+                actual.fecha_vencimiento_t = fecha_vencimiento_t
+                actual.estado_t = estado_t
+                actual.porcentaje = porcentaje
+                return True
+            actual = actual.siguiente
+        return False
+
+    def obtener_posicion(self, nombre):
+        actual = self.cabeza
+        pos = 0
+        while actual:
+            if actual.nombre_t == nombre:
+                return pos
+            actual = actual.siguiente
+            pos += 1
+        return -1
+    
+class PilaTareasPrioritarias:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar_tprioritaria(self, nombre_antiguo, id_t, nuevo_nombre, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje):
+        nuevo_nodo = Tarea(nombre_antiguo, id_t, nuevo_nombre, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+        else:
+            nuevo_nodo.siguiente = self.cabeza
+            self.cabeza = nuevo_nodo
+
+    def mostrar_tprioritaria(self):
+        actual = self.cabeza    
+        print("Nombre:", actual.nombre_t)
+    
+
+    def buscar_tarea(self, nombre):
+        actual = self.cabeza
+        while actual:
+            if actual.nombre_t == nombre:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def eliminar_tprioritaria(self):
+        if not self.cabeza:
+            return None
+        eliminado = self.cabeza
+        self.cabeza = self.cabeza.siguiente
+        return eliminado
+    
+    def mostrar_tp(self):
+        actual = self.cabeza
+        while actual:
+            print("Nombre:", actual.nombre_t)
+            diferencia = actual.fecha_vencimiento_t - actual.fecha_inicio_t
+            print(f"Diferencia: {diferencia}")
+            dias = diferencia.days
+            segundos_totales = diferencia.seconds
+            horas = segundos_totales // 3600
+            minutos = (segundos_totales % 3600) // 60
+            segundos = (segundos_totales % 3600) % 60
+            print(f"Tiempo total: {dias} días, {horas} horas, {minutos} minutos y {segundos} segundos")
+            print()
+            actual = actual.siguiente
+
+class ColaTareasVencimiento:
+    def __init__(self):
+        self.cola = deque()
+        
+    def agregar_tarea(self, tarea):
+        self.cola.append(tarea)
+        
+    def eliminar_tarea(self):
+        if self.cola:
+            return self.cola.popleft()
+        else:
+            return None
+        
+    def consultar_proxima_tarea(self):
+        if self.cola:
+            return self.cola[0]
+        else:
+            return None
+        
+    def tiempo_total_tareas(self):
+        total = timedelta()
+        for tarea in self.cola:
+            total += tarea.fecha_vencimiento_t - datetime.now()
+        return total
+      
 #3.- Módulo de Reportes
 class Reportes:
     

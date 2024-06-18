@@ -28,15 +28,6 @@ class Proyecto:
         
     def agregar_tarea(self, tarea):
         self.tareas.append(tarea)
-        
-    def contar_tareas_asignadas_a_miembro(self, miembro):
-        return sum(1 for tarea in self.tareas if miembro in tarea.empresa_cliente)
-    
-    def obtener_tareas_pendientes(self):
-        return [tarea for tarea in self.tareas if tarea.estado_t == 'pendiente']
-    
-    def duracion_restante(self):
-        return (self.fecha_vencimiento - datetime.now()).days
 
 class Tarea:
     def __init__(self, id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje):
@@ -322,262 +313,254 @@ def menu():
                 tarea.id_t, tarea.nombre_t, tarea.empresa_cliente, tarea.descripcion_t,
                 tarea.fecha_inicio_t, tarea.fecha_vencimiento_t, tarea.estado_t, tarea.porcentaje
             )
+            for subtarea in tarea.subtareas:
+                print(f"Subtarea cargada: ID {subtarea.id_s}, Nombre: {subtarea.nombre_s}, Estado: {subtarea.estado_s}")
             
     #Imprimir proyectos cargados
-    print("Proyectos cargados desde el archivo JSON:")
+    """print("Proyectos cargados desde el archivo JSON:")
     for proyecto in proyectos:
         print(f"ID: {proyecto.ide}, Nombre: {proyecto.nombre}, Estado: {proyecto.estado_act}")
+        for tarea in proyecto.tareas:
+            print(f"  Tarea ID: {tarea.id_t}, Nombre: {tarea.nombre_t}, Estado: {tarea.estado_t}")
+            for subtarea in tarea.subtareas:
+                print(f"    Subtarea ID: {subtarea.id_s}, Nombre: {subtarea.nombre_s}, Estado: {subtarea.estado_s}")"""
 
-    cent = input("¿Desea continuar? (s/n): ")
+    cent = input("\n¿Desea continuar? (s/n): ")
     while cent.lower() == 's':
+        
+        #Menú principal
         print("\n****Gestión de Proyectos y Tareas****")
         print("\nMenú de opciones:")
-        print("1.- Crear un proyecto")
-        print("2.- Modificar proyecto")
-        print("3.- Consultar proyecto")
-        print("4.- Eliminar proyecto")
-        print("5.- Listar proyectos")
-        print("6.- Crear tarea")
-        print("7.- Mostrar tareas")
-        print("8.- Agregar tarea a pila de prioridades")
-        print("9.- Mostrar tareas prioritarias")
-        print("10.- Agregar tarea a cola de vencimiento")
-        print("11.- Mostrar tareas por vencimiento")
-        print("12.- Salir")
+        print("1.- Menú de proyectos")
+        print("2.- Menú de tareas")
+        print("3.- Menú de subtareas")
+        print("4.- Salir")
 
         opcion = input("\nSeleccione una opción: ")
-
+        
+        #Menú proyectos
         if opcion == '1':
-            print("\nOpción 1 seleccionada (Crear un proyecto)")
-            id_opc = input("Ingrese el id del proyecto: ")
-            nombre_opc = input("Ingrese el nombre del proyecto: ")
-            descripcion_opc = input("Ingrese la descripción del proyecto: ")
-            fecha_inicio_opc = datetime.strptime(input("Ingrese la fecha de inicio del proyecto (YYYY-MM-DD): "), "%Y-%m-%d")
-            fecha_vencimiento_opc = datetime.strptime(input("Ingrese la fecha de vencimiento del proyecto (YYYY-MM-DD): "), "%Y-%m-%d")
-            estado_act_opc = input("Ingrese el estado actual del proyecto: ")
-            empresa_opc = input("Ingrese la empresa del proyecto: ")
-            gerente_opc = input("Ingrese el gerente del proyecto: ")
-            equipo_opc = input("Ingrese el equipo del proyecto: ")
-            proyecto = Proyecto(id_opc, nombre_opc, descripcion_opc, fecha_inicio_opc, fecha_vencimiento_opc, estado_act_opc, empresa_opc, gerente_opc, equipo_opc)
-            proyectos.append(proyecto)
-            print("\nProyecto creado y añadido a la lista.")
-
-        elif opcion == '2':
-            print("\nOpción 2 seleccionada (Modificar proyecto)")
-            buscar_id = input("Introduzca el id del proyecto a modificar: ")
-            for proyecto in proyectos:
-                if proyecto.ide == buscar_id:
-                    proyecto.nombre = input("Nuevo nombre: ")
-                    proyecto.descripcion = input("Nueva descripción: ")
-                    proyecto.fecha_inicio = datetime.strptime(input("Nueva fecha de inicio (YYYY-MM-DD): "), "%Y-%m-%d")
-                    proyecto.fecha_vencimiento = datetime.strptime(input("Nueva fecha de vencimiento (YYYY-MM-DD): "), "%Y-%m-%d")
-                    proyecto.estado_act = input("Nuevo estado: ")
-                    proyecto.empresa = input("Nueva empresa: ")
-                    proyecto.gerente = input("Nuevo gerente: ")
-                    proyecto.equipo = input("Nuevo equipo: ")
-                    print("\nProyecto modificado.")
-                    break
-            else:
-                print("\nProyecto no encontrado.")
-
-        elif opcion == '3':
-            print("\nOpción 3 seleccionada (Consultar proyecto)")
-            buscar_id = input("Introduzca el id del proyecto a consultar: ")
-            for proyecto in proyectos:
-                if proyecto.ide == buscar_id:
-                    print(f"Nombre: {proyecto.nombre}")
-                    print(f"Descripción: {proyecto.descripcion}")
-                    print(f"Fecha de inicio: {proyecto.fecha_inicio}")
-                    print(f"Fecha de vencimiento: {proyecto.fecha_vencimiento}")
-                    print(f"Estado: {proyecto.estado_act}")
-                    print(f"Empresa: {proyecto.empresa}")
-                    print(f"Gerente: {proyecto.gerente}")
-                    print(f"Equipo: {proyecto.equipo}")
-                    break
-            else:
-                print("\nProyecto no encontrado.")
-
-        elif opcion == '4':
-            print("\nOpción 4 seleccionada (Eliminar proyecto)")
-            buscar_id = input("Introduzca el id del proyecto a eliminar: ")
-            for i, proyecto in enumerate(proyectos):
-                if proyecto.ide == buscar_id:
-                    proyectos.pop(i)
-                    print("\nProyecto eliminado.")
-                    break
-            else:
-                print("\nProyecto no encontrado.")
-
-        elif opcion == '5':
-            print("\nOpción 5 seleccionada (Listar proyectos)")
-            for proyecto in proyectos:
-                print(f"ID: {proyecto.ide}, Nombre: {proyecto.nombre}, Estado: {proyecto.estado_act}")
-
-        elif opcion == '6':
-            print("\nOpción 6 seleccionada (Crear tarea)")
-            id_t = input("Ingrese el id de la tarea: ")
-            nombre_t = input("Ingrese el nombre de la tarea: ")
-            empresa_cliente = input("Ingrese la empresa cliente: ")
-            descripcion_t = input("Ingrese la descripción de la tarea: ")
-            fecha_inicio_t = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
-            fecha_vencimiento_t = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
-            estado_t = input("Ingrese el estado de la tarea: ")
-            porcentaje = float(input("Ingrese el porcentaje de la tarea: "))
-            lista_tareas.agregar_tarea(id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
-            print("\nTarea creada y añadida a la lista enlazada.")
-
-        elif opcion == '7':
-            print("\nOpción 7 seleccionada (Mostrar tareas)")
-            lista_tareas.mostrar_tareas()
-
-        elif opcion == '8':
-            print("\nOpción 8 seleccionada (Agregar tarea a pila de prioridades)")
-            nombre_antiguo = input("Ingrese el nombre antiguo de la tarea: ")
-            id_t = input("Ingrese el id de la tarea: ")
-            nuevo_nombre = input("Ingrese el nuevo nombre de la tarea: ")
-            empresa_cliente = input("Ingrese la empresa cliente: ")
-            descripcion_t = input("Ingrese la descripción de la tarea: ")
-            fecha_inicio_t = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
-            fecha_vencimiento_t = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
-            estado_t = input("Ingrese el estado de la tarea: ")
-            porcentaje = float(input("Ingrese el porcentaje de la tarea: "))
-            pila_tareas.agregar_tprioritaria(nombre_antiguo, id_t, nuevo_nombre, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
-            print("\nTarea añadida a la pila de tareas prioritarias.")
-
-        elif opcion == '9':
-            print("\nOpción 9 seleccionada (Mostrar tareas prioritarias)")
-            for proyecto in proyectos:
-                for tarea in proyecto.tareas:
-                    pila_tareas.agregar_tprioritaria(
-                        tarea.id_t, tarea.nombre_t, tarea.empresa_cliente, tarea.descripcion_t,
-                        tarea.fecha_inicio_t, tarea.fecha_vencimiento_t, tarea.estado_t, tarea.porcentaje
-                    )
-            pila_tareas.mostrar_tprioritaria()
-            pila_tareas.mostrar_tp()
-
-        elif opcion == '10':
-            print("\nOpción 10 seleccionada (Agregar tarea a cola de vencimiento)")
-            id_t = input("Ingrese el id de la tarea: ")
-            nombre_t = input("Ingrese el nombre de la tarea: ")
-            empresa_cliente = input("Ingrese la empresa cliente: ")
-            descripcion_t = input("Ingrese la descripción de la tarea: ")
-            fecha_inicio_t = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
-            fecha_vencimiento_t = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
-            estado_t = input("Ingrese el estado de la tarea: ")
-            porcentaje = float(input("Ingrese el porcentaje de la tarea: "))
-            tarea = Tarea(id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
-            cola_tareas.agregar_tarea(tarea)
-            print("\nTarea añadida a la cola de vencimiento.")
-
-        elif opcion == '11':
-            print("\nOpción 11 seleccionada (Mostrar tareas por vencimiento)")
-            for tarea in cola_tareas.cola:
-                print(f"ID: {tarea.id_t}, Nombre: {tarea.nombre_t}, Vence: {tarea.fecha_vencimiento_t}")
+            print("\n*****Menú de proyectos*****")
+            print("1.- Crear un proyecto")
+            print("2.- Modificar proyecto")
+            print("3.- Consulstar proyecto")
+            print("4.- Eliminar proyecto")
+            print("5.- Listar proyectos")
+            print("6.- Filtrar proyectos")
+            print("7.- Volver al menú principal")
             
-        elif opcion == '12':
+            opcion_proyect = input("\nSeleccione una opción: ")
+
+            if opcion_proyect == '1':
+                print("\nOpción 1 seleccionada (Crear un proyecto)")
+                id_opc = input("Ingrese el id del proyecto: ")
+                nombre_opc = input("Ingrese el nombre del proyecto: ")
+                descripcion_opc = input("Ingrese la descripción del proyecto: ")
+                fecha_inicio_opc = datetime.strptime(input("Ingrese la fecha de inicio del proyecto (YYYY-MM-DD): "), "%Y-%m-%d")
+                fecha_vencimiento_opc = datetime.strptime(input("Ingrese la fecha de vencimiento del proyecto (YYYY-MM-DD): "), "%Y-%m-%d")
+                estado_act_opc = input("Ingrese el estado actual del proyecto: ")
+                empresa_opc = input("Ingrese la empresa del proyecto: ")
+                gerente_opc = input("Ingrese el gerente del proyecto: ")
+                equipo_opc = input("Ingrese el equipo del proyecto: ")
+                proyecto = Proyecto(id_opc, nombre_opc, descripcion_opc, fecha_inicio_opc, fecha_vencimiento_opc, estado_act_opc, empresa_opc, gerente_opc, equipo_opc)
+                proyectos.append(proyecto)
+                print("\nProyecto creado y añadido a la lista.")
+
+            elif opcion_proyect == '2':
+                print("\nOpción 2 seleccionada (Modificar proyecto)")
+                buscar_id = input("Introduzca el id del proyecto a modificar: ")
+                for proyecto in proyectos:
+                    if proyecto.ide == buscar_id:
+                        proyecto.nombre = input("Nuevo nombre: ")
+                        proyecto.descripcion = input("Nueva descripción: ")
+                        proyecto.fecha_inicio = datetime.strptime(input("Nueva fecha de inicio (YYYY-MM-DD): "), "%Y-%m-%d")
+                        proyecto.fecha_vencimiento = datetime.strptime(input("Nueva fecha de vencimiento (YYYY-MM-DD): "), "%Y-%m-%d")
+                        proyecto.estado_act = input("Nuevo estado: ")
+                        proyecto.empresa = input("Nueva empresa: ")
+                        proyecto.gerente = input("Nuevo gerente: ")
+                        proyecto.equipo = input("Nuevo equipo: ")
+                        print("\nProyecto modificado.")
+                        break
+                else:
+                    print("\nProyecto no encontrado.")
+
+            elif opcion_proyect == '3':
+                print("\nOpción 3 seleccionada (Consultar proyecto)")
+                buscar_id = input("Introduzca el id del proyecto a consultar: ")
+                for proyecto in proyectos:
+                    if proyecto.ide == buscar_id:
+                        print(f"Nombre: {proyecto.nombre}")
+                        print(f"Descripción: {proyecto.descripcion}")
+                        print(f"Fecha de inicio: {proyecto.fecha_inicio}")
+                        print(f"Fecha de vencimiento: {proyecto.fecha_vencimiento}")
+                        print(f"Estado: {proyecto.estado_act}")
+                        print(f"Empresa: {proyecto.empresa}")
+                        print(f"Gerente: {proyecto.gerente}")
+                        print(f"Equipo: {proyecto.equipo}")
+                        break
+                else:
+                    print("\nProyecto no encontrado.")
+
+            elif opcion_proyect == '4':
+                print("\nOpción 4 seleccionada (Eliminar proyecto)")
+                buscar_id = input("Introduzca el id del proyecto a eliminar: ")
+                for i, proyecto in enumerate(proyectos):
+                    if proyecto.ide == buscar_id:
+                        proyectos.pop(i)
+                        print("\nProyecto eliminado.")
+                        break
+                else:
+                    print("\nProyecto no encontrado.")
+
+            elif opcion_proyect == '5':
+                print("\nOpción 5 seleccionada (Listar proyectos)")
+                for proyecto in proyectos:
+                    print(f"ID: {proyecto.ide}, Nombre: {proyecto.nombre}, Estado: {proyecto.estado_act}")
+                    
+            elif opcion_proyect == '6':
+                print("\nOpción 6 seleccionada (Filtrar proyectos)")
+                fecha_inicio_filtro = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                fecha_vencimiento_filtro = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                estado_filtro = input("Ingrese el estado del proyecto: ")
+                empresa_filtro = input("Ingrese la empresa del proyecto: ")
+
+                proyectos_filtrados = Reportes.filtrar_proyectos(proyectos, fecha_inicio_filtro, fecha_vencimiento_filtro, estado_filtro, empresa_filtro)
+                
+                print("\nProyectos filtrados:")
+                if proyectos_filtrados:
+                    for proyecto in proyectos_filtrados:
+                        print(f"ID: {proyecto.ide}, Nombre: {proyecto.nombre}, Estado: {proyecto.estado_act}")
+                else:
+                    print("No se encontraron proyectos que coincidan con los criterios de filtro.")
+        
+        #Menú tareas          
+        elif opcion == '2':
+            print("\n*****Menú de tareas*****")
+            print("1.- Crear tarea")
+            print("2.- Mostrar tareas")
+            print("3.- Agregar tarea a pila de prioridades (No funciona)")
+            print("4.- Mostrar tareas prioritarias (No funciona)")
+            print("5.- Agregar tarea a cola de vencimiento")
+            print("6.- Mostrar tareas por vencimiento (Solo muestra las tareas añadidas manualmente)")
+            print("7.- Consultar tareas por estado")
+            print("8.- Filtrar tareas por fecha")
+            print("9.- Salir al menú principal")
+            
+            opcion_tareas = input("\nSeleccione una opción: ")
+
+            if opcion_tareas == '1':
+                print("\nOpción 1 seleccionada (Crear tarea)")
+                id_t = input("Ingrese el id de la tarea: ")
+                nombre_t = input("Ingrese el nombre de la tarea: ")
+                empresa_cliente = input("Ingrese la empresa cliente: ")
+                descripcion_t = input("Ingrese la descripción de la tarea: ")
+                fecha_inicio_t = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                fecha_vencimiento_t = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                estado_t = input("Ingrese el estado de la tarea: ")
+                porcentaje = float(input("Ingrese el porcentaje de la tarea: "))
+                lista_tareas.agregar_tarea(id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
+                print("\nTarea creada y añadida a la lista enlazada.")
+
+            elif opcion_tareas == '2':
+                print("\nOpción 2 seleccionada (Mostrar tareas)")
+                lista_tareas.mostrar_tareas()
+
+            elif opcion_tareas == '3': #Arreglar, da error
+                print("\nOpción 3 seleccionada (Agregar tarea a pila de prioridades)")
+                nombre_antiguo = input("Ingrese el nombre antiguo de la tarea: ")
+                id_t = input("Ingrese el id de la tarea: ")
+                nuevo_nombre = input("Ingrese el nuevo nombre de la tarea: ")
+                empresa_cliente = input("Ingrese la empresa cliente: ")
+                descripcion_t = input("Ingrese la descripción de la tarea: ")
+                fecha_inicio_t = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                fecha_vencimiento_t = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                estado_t = input("Ingrese el estado de la tarea: ")
+                porcentaje = float(input("Ingrese el porcentaje de la tarea: "))
+                pila_tareas.agregar_tprioritaria(nombre_antiguo, id_t, nuevo_nombre, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
+                print("\nTarea añadida a la pila de tareas prioritarias.")
+
+            elif opcion_tareas == '4': #Arreglar
+                print("\nOpción 4 seleccionada (Mostrar tareas prioritarias)")
+                for proyecto in proyectos:
+                    for tarea in proyecto.tareas:
+                        pila_tareas.agregar_tprioritaria(
+                            tarea.id_t, tarea.nombre_t, tarea.empresa_cliente, tarea.descripcion_t,
+                            tarea.fecha_inicio_t, tarea.fecha_vencimiento_t, tarea.estado_t, tarea.porcentaje
+                        )
+                pila_tareas.mostrar_tprioritaria()
+                pila_tareas.mostrar_tp()
+
+            elif opcion_tareas == '5':
+                print("\nOpción 5 seleccionada (Agregar tarea a cola de vencimiento)")
+                id_t = input("Ingrese el id de la tarea: ")
+                nombre_t = input("Ingrese el nombre de la tarea: ")
+                empresa_cliente = input("Ingrese la empresa cliente: ")
+                descripcion_t = input("Ingrese la descripción de la tarea: ")
+                fecha_inicio_t = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                fecha_vencimiento_t = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                estado_t = input("Ingrese el estado de la tarea: ")
+                porcentaje = float(input("Ingrese el porcentaje de la tarea: "))
+                tarea = Tarea(id_t, nombre_t, empresa_cliente, descripcion_t, fecha_inicio_t, fecha_vencimiento_t, estado_t, porcentaje)
+                cola_tareas.agregar_tarea(tarea)
+                print("\nTarea añadida a la cola de vencimiento.")
+
+            elif opcion_tareas == '6': #Solo muestra las añididas manualmente, no lee la del archivo .json
+                print("\nOpción 6 seleccionada (Mostrar tareas por vencimiento)")
+                for tarea in cola_tareas.cola:
+                    print(f"ID: {tarea.id_t}, Nombre: {tarea.nombre_t}, Vence: {tarea.fecha_vencimiento_t}")
+                    
+            elif opcion_tareas == '7':
+                print("\nOpción 7 seleccionada (Consultar tareas por estado)")
+                estado_consulta = input("Ingrese el estado de las tareas a consultar: ")
+                tareas_por_estado = Reportes.consultar_tareas_por_estado(proyectos, estado_consulta)
+                
+                print("\nTareas con el estado seleccionado:")
+                if tareas_por_estado:
+                    for tarea in tareas_por_estado:
+                        print(f"ID: {tarea.id_t}, Nombre: {tarea.nombre_t}, Estado: {tarea.estado_t}")
+                else:
+                    print("No se encontraron tareas con el estado especificado.")
+                
+            elif opcion_tareas == '8':
+                print("\nOpción 8 seleccionada (Filtrar tareas por fecha)")
+                fecha_inicio_filtro = datetime.strptime(input("Ingrese la fecha de inicio de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+                fecha_vencimiento_filtro = datetime.strptime(input("Ingrese la fecha de vencimiento de la tarea (YYYY-MM-DD): "), "%Y-%m-%d")
+
+                tareas_filtradas = Reportes.filtrar_tareas_por_fecha(proyectos, fecha_inicio_filtro, fecha_vencimiento_filtro)
+                
+                print("\nTareas filtradas por fecha:")
+                if tareas_filtradas:
+                    for tarea in tareas_filtradas:
+                        print(f"ID: {tarea.id_t}, Nombre: {tarea.nombre_t}, Fecha de inicio: {tarea.fecha_inicio_t}, Fecha de vencimiento: {tarea.fecha_vencimiento_t}")
+                else:
+                    print("No se encontraron tareas que coincidan con los criterios de filtro.")
+        
+        #Menú subtareas      
+        elif opcion == '3':
+            print("*****Menú de subtareas*****")
+            print("1.- Listar subtareas (No funciona del todo bien)")
+            print("2.- Salir al menú principal")
+            
+            opcion_subtareas = input("\nSeleccione una opción: ")
+            
+            if opcion_subtareas == '1': #Arreglar
+                print("\nOpción 1 seleccionada (Listar subtareas)")
+        
+                proyecto_id_filtro = input("Ingrese el ID del proyecto: ")
+                proyecto_nombre_filtro = input("Ingrese el nombre del proyecto: ")
+
+                subtareas_listadas = Reportes.listar_subtareas(proyectos, proyecto_id_filtro, proyecto_nombre_filtro)
+                
+                print("\nSubtareas listadas:")
+                if subtareas_listadas:
+                    for tarea in subtareas_listadas:
+                        print(f"Tarea {tarea['tarea_id']} - {tarea['tarea_nombre']}:")
+                        for subtarea in tarea["subtareas"]:
+                            print(f"  - {subtarea['nombre']}: {subtarea['descripcion']}")
+                else:
+                    print("No se encontraron subtareas para los criterios especificados.")
+            
+        elif opcion == '4':
             cent = input("¿Desea continuar? (s/n): ")
 
 menu()
-
-# Creamos algunos proyectos, tareas y subtareas para realizar pruebas
-
-"""proyecto1 = Proyecto(
-    ide=1,
-    nombre="Proyecto 1",
-    descripcion="Descripción del Proyecto 1",
-    fecha_inicio=datetime(2023, 1, 1),
-    fecha_vencimiento=datetime(2023, 12, 31),
-    estado_act="activo",
-    empresa="Empresa 1",
-    gerente="Gerente 1",
-    equipo=["Equipo 1"]
-)
-
-tarea1 = Tarea(
-    id_t=1,
-    nombre_t="Tarea 1",
-    empresa_cliente="Empresa Cliente 1",
-    descripcion_t="Descripción de la Tarea 1",
-    fecha_inicio_t=datetime(2023, 1, 1),
-    fecha_vencimiento_t=datetime(2023, 6, 30),
-    estado_t="pendiente",
-    porcentaje=50
-)
-
-subtarea1 = Subtarea(
-    id_s=1,
-    nombre_s="Subtarea 1",
-    descripcion_s="Descripción de la Subtarea 1",
-    estado_s="completada"
-)
-subtarea2 = Subtarea(
-    id_s=1,
-    nombre_s="Subtarea 2",
-    descripcion_s="Descripción de la Subtarea 2",
-    estado_s="completada"
-)
-
-# Agregar subtarea a la tarea
-tarea1.agregar_subtarea(subtarea1)
-tarea1.agregar_subtarea(subtarea2)
-
-# Agregar tarea al proyecto
-proyecto1.agregar_tarea(tarea1)
-
-# Crear un segundo proyecto para pruebas
-proyecto2 = Proyecto(
-    ide=2,
-    nombre="Proyecto 2",
-    descripcion="Descripción del Proyecto 2",
-    fecha_inicio=datetime(2023, 2, 1),
-    fecha_vencimiento=datetime(2023, 11, 30),
-    estado_act="completado",
-    empresa="Empresa 2",
-    gerente="Gerente 2",
-    equipo=["Equipo 2"]
-)
-
-tarea2 = Tarea(
-    id_t=2,
-    nombre_t="Tarea 2",
-    empresa_cliente="Empresa Cliente 2",
-    descripcion_t="Descripción de la Tarea 2",
-    fecha_inicio_t=datetime(2023, 3, 1),
-    fecha_vencimiento_t=datetime(2023, 8, 30),
-    estado_t="en progreso",
-    porcentaje=75
-)
-
-# Agregar tarea al proyecto
-proyecto2.agregar_tarea(tarea2)
-
-# Lista de proyectos para pruebas
-proyectos = [proyecto1, proyecto2]
-
-# Realizamos pruebas de las funciones de reporte
-# 1. Consulta de Tareas por Estado
-tareas_pendientes = Reportes.consultar_tareas_por_estado(proyectos, "pendiente")
-print("Tareas Pendientes:")
-for tarea in tareas_pendientes:
-    print(f"- {tarea.nombre_t}: {tarea.descripcion_t}")
-
-# 2. Filtrado por Fecha
-tareas_por_fecha = Reportes.filtrar_tareas_por_fecha(proyectos, fecha_inicio=datetime(2023, 1, 1), fecha_vencimiento=datetime(2023, 6, 30))
-print("\nTareas entre 2023-01-01 y 2023-06-30:")
-for tarea in tareas_por_fecha:
-    print(f"- {tarea.nombre_t}: {tarea.descripcion_t}")
-
-# 3. Filtrado de Proyectos
-proyectos_filtrados = Reportes.filtrar_proyectos(proyectos, estado="activo")
-print("\nProyectos Activos:")
-for proyecto in proyectos_filtrados:
-    print(f"- {proyecto.nombre}: {proyecto.descripcion}")
-
-# 4. Listar Subtareas
-subtareas_listadas = Reportes.listar_subtareas(proyectos, proyecto_id=1)
-print("\nSubtareas del Proyecto 1:")
-for tarea in subtareas_listadas:
-    print(f"Tarea {tarea['tarea_id']} - {tarea['tarea_nombre']}:")
-    for subtarea in tarea["subtareas"]:
-        print(f"  - {subtarea['nombre']}: {subtarea['descripcion']}")
-"""

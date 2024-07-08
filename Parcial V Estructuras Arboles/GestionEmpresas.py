@@ -285,15 +285,12 @@ class GestionReportes:
         self.gestion_sprints = gestion_sprints
 
     def tareas_criticas(self):
-        # Aquí implementarás la lógica para identificar y mostrar tareas críticas.
         pass
 
     def listar_tareas_empleado(self, empleado):
-        # Aquí implementarás la lógica para listar todas las tareas asignadas a un empleado específico.
         pass
 
     def exportar_tareas_completadas(self, horas):
-        # Aquí implementarás la lógica para exportar a un archivo CSV las tareas completadas cuya duración sea igual o inferior a un valor en horas especificado.
         pass
 
 # Ejemplo de uso

@@ -284,14 +284,41 @@ class GestionReportes:
         self.gestion_tareas = gestion_tareas
         self.gestion_sprints = gestion_sprints
 
-    def tareas_criticas(self):
-        pass
+class MenuOpciones:
+    def __init__(self):
+                    print("""
+Menú de Opciones:
+1. Identificar y mostrar las tareas críticas.
+2. Listar todos los sprite de un proyecto y nivel especificado.
+3. Listar todas las tareas asignadas a un empleado.
+4. Exportar tareas completadas con duración igual o inferior a un valor.
+""") 
+                    opc = input("ingrese su opcion")
+                    if opc=='1':
+                        # Implementar lógica para identificar y mostrar tareas críticas
+                        print("Identificando tareas críticas...")
+                        MenuOpciones()
 
-    def listar_tareas_empleado(self, empleado):
-        pass
+                    elif opc=='2':
+                        # Implementar lógica para listar todos los sprites de un proyecto y nivel especificado
+                        print("Listando sprites...")
+                        MenuOpciones()
+                    elif opc=='3':
+                        # Implementar lógica para listar todas las tareas asignadas a un empleado
+                        print("Listando tareas de un empleado...")
+                        MenuOpciones()
 
-    def exportar_tareas_completadas(self, horas):
-        pass
+                    elif opc=='4':
+                        # Implementar lógica para exportar tareas completadas
+                        print("Exportando tareas completadas...")
+                        MenuOpciones()
+                    else:
+                        print("opcion incorrecta")
+                        MenuOpciones()
+                    
+                    
 
 # Ejemplo de uso
 gestion_reportes = GestionReportes(gestion_proyectos, gestion_tareas, gestion_sprints)
+MenuOpciones()
+

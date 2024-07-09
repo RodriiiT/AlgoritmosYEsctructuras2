@@ -1,61 +1,135 @@
-id,nombre,direccion,telefono
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
-1,Empresa A,Direccion A,123456789
-2,Empresa B,Direccion B,987654321
+id,nombre,descripcion,fecha_creacion,direccion,telefono,correo,gerente,equipo_contacto
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,,,Direccion A,123456789,,,
+2,Empresa B,,,Direccion B,987654321,,,
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B
+1,Empresa A,Descripción A,2023-01-01,Direccion A,123456789,correoA@empresa.com,Gerente A,Equipo A
+2,Empresa B,Descripción B,2023-02-01,Direccion B,987654321,correoB@empresa.com,Gerente B,Equipo B

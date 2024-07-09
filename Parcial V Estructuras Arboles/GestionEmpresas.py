@@ -1,5 +1,5 @@
 """
-Parcial V. Estructura de Árboles
+Estructura de Árboles
 
 Elaborado por:
 
@@ -40,7 +40,39 @@ class GestionEmpresas:
             with open(self.archivo_csv, newline='') as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
-                    empresa = Empresa(row['id'], row['nombre'], row['descripcion'], row['fecha_creacion'], row['direccion'], row['telefono'], row['correo'], row['gerente'], row['equipo_contacto'])
+                    empresa = Empresa(
+                        row.get('id', ''),
+                        row.get('nombre', ''),
+                        row.get('descripcion', ''),
+                        row.get('fecha_creacion', ''),
+                        row.get('direccion', ''),
+                        row.get('telefono', ''),
+                        row.get('correo', ''),
+                        row.get('gerente', ''),
+                        row.get('equipo_contacto', '')
+                    )
+                    empresas.append(empresa)
+        except FileNotFoundError:
+            pass
+        return empresas
+
+    def cargar_empresas(self):
+        empresas = []
+        try:
+            with open(self.archivo_csv, newline='') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    empresa = Empresa(
+                        row.get('id', ''),
+                        row.get('nombre', ''),
+                        row.get('descripcion', ''),
+                        row.get('fecha_creacion', ''),
+                        row.get('direccion', ''),
+                        row.get('telefono', ''),
+                        row.get('correo', ''),
+                        row.get('gerente', ''),
+                        row.get('equipo_contacto', '')
+                    )
                     empresas.append(empresa)
         except FileNotFoundError:
             pass
@@ -115,7 +147,7 @@ gestion_empresas.listar_empresas()
 
 #2.- Modulo de Gestión de Proyectos------------------------------------------------------------------------------------------------------------------------------------------------
 class Proyecto:
-    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, empresa, gerente, equipo):
+    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, empresa, gerente, equipo, tareas=None):
         self.id = id
         self.nombre = nombre
         self.descripcion = descripcion
@@ -125,10 +157,25 @@ class Proyecto:
         self.empresa = empresa
         self.gerente = gerente
         self.equipo = equipo
+        self.tareas = tareas if tareas else []
 
     def tiempo_restante(self):
         return (datetime.strptime(self.fecha_vencimiento, '%Y-%m-%d') - datetime.now()).days
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "descripcion": self.descripcion,
+            "fecha_inicio": self.fecha_inicio,
+            "fecha_vencimiento": self.fecha_vencimiento,
+            "estado": self.estado,
+            "empresa": self.empresa,
+            "gerente": self.gerente,
+            "equipo": self.equipo,
+            "tareas": [tarea.to_dict() for tarea in self.tareas]
+        }
+    
     def __str__(self):
         return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Fecha de Inicio: {self.fecha_inicio}, Fecha de Vencimiento: {self.fecha_vencimiento}, Estado: {self.estado}, Empresa: {self.empresa}, Gerente: {self.gerente}, Equipo: {self.equipo}"
 
@@ -338,6 +385,78 @@ class GestionProyectos:
 
     def listar_proyectos(self):
         self.arbol_avl.preorden(self.arbol_avl.raiz)
+        
+    def identificar_tareas_criticas(self):
+        tareas_criticas = []
+        self.postorden_tareas_criticas(self.arbol_avl.raiz, tareas_criticas)
+        for tarea in tareas_criticas:
+            print(tarea)
+
+    def postorden_tareas_criticas(self, nodo, tareas_criticas):
+        if not nodo:
+            return
+        self.postorden_tareas_criticas(nodo.izquierda, tareas_criticas)
+        self.postorden_tareas_criticas(nodo.derecha, tareas_criticas)
+        if nodo.proyecto.estado == 'critico':  # Ejemplo de criterio para identificar tareas críticas
+            tareas_criticas.append(nodo.proyecto)
+
+    def listar_sprites_nivel(self, id_proyecto, nivel):
+        proyecto = self.buscar_proyecto_por_id(id_proyecto)
+        if proyecto:
+            self.listar_tareas_nivel(proyecto.tareas, nivel)
+
+    def listar_tareas_nivel(self, tareas, nivel, actual=0):
+        if actual == nivel:
+            for tarea in tareas:
+                print(tarea)
+        else:
+            for tarea in tareas:
+                self.listar_tareas_nivel(tarea.subtareas, nivel, actual + 1)
+
+    def listar_tareas_empleado(self, cedula):
+        for empresa in self.gestion_empresas.empresas:
+            for proyecto in empresa.proyectos:
+                horas_total = 0
+                tareas_empleado = []
+                self.postorden_tareas_empleado(proyecto.tareas, cedula, tareas_empleado, horas_total)
+                if tareas_empleado:
+                    print(f"Proyecto {proyecto.id} - {horas_total} horas")
+                    for tarea in tareas_empleado:
+                        print(f"- {tarea.nombre} {tarea.duracion_horas} horas")
+
+    def postorden_tareas_empleado(self, tareas, cedula, tareas_empleado, horas_total):
+        for tarea in tareas:
+            self.postorden_tareas_empleado(tarea.subtareas, cedula, tareas_empleado, horas_total)
+            if tarea.responsable == cedula:
+                tareas_empleado.append(tarea)
+                horas_total += tarea.duracion_horas
+
+    def exportar_tareas_completadas(self, id_proyecto, duracion_max):
+        proyecto = self.buscar_proyecto_por_id(id_proyecto)
+        if proyecto:
+            tareas_completadas = []
+            self.postorden_exportar_tareas(proyecto.tareas, duracion_max, tareas_completadas)
+            with open('tareas_completadas.csv', 'w', newline='') as csvfile:
+                fieldnames = ['id', 'nombre', 'descripcion', 'duracion_horas', 'costo', 'responsable']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for tarea in tareas_completadas:
+                    writer.writerow({'id': tarea.id, 'nombre': tarea.nombre, 'descripcion': tarea.descripcion, 'duracion_horas': tarea.duracion_horas, 'costo': tarea.costo, 'responsable': tarea.responsable})
+
+    def postorden_exportar_tareas(self, tareas, duracion_max, tareas_completadas):
+        for tarea in tareas:
+            self.postorden_exportar_tareas(tarea.subtareas, duracion_max, tareas_completadas)
+            if tarea.duracion_horas <= duracion_max:
+                tareas_completadas.append(tarea)
+
+    def buscar_proyecto_por_id(self, id):
+        for empresa in self.gestion_empresas.empresas:
+            for proyecto in empresa.proyectos:
+                if proyecto.id == id:
+                    return proyecto
+        return None
+    
+    
 
 # Ejemplo de uso
 gestion_proyectos = GestionProyectos(gestion_empresas)
@@ -347,55 +466,60 @@ gestion_proyectos.listar_proyectos()
 
 #3.- Modulo de Gestión de Tareas y Prioridades--------------------------------------------------------------------------------------------------------------------------------------
 class Tarea:
-    def __init__(self, id, nombre, empresa, descripcion, fecha_inicio, fecha_vencimiento, estado, porcentaje):
+    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, encargado):
         self.id = id
         self.nombre = nombre
-        self.empresa = empresa
         self.descripcion = descripcion
         self.fecha_inicio = fecha_inicio
         self.fecha_vencimiento = fecha_vencimiento
         self.estado = estado
-        self.porcentaje = porcentaje
-        self.subtareas = []
+        self.encargado = encargado
+        self.subtareas = []  # Inicializamos la lista de subtareas
 
     def agregar_subtarea(self, subtarea):
         self.subtareas.append(subtarea)
+        
+    def eliminar_subtarea(self, subtarea_id):
+        self.subtareas = [sub for sub in self.subtareas if sub.id != subtarea_id]
 
-    def __str__(self, nivel=0):
-        ret = "\t" * nivel + f"ID: {self.id}, Nombre: {self.nombre}, Empresa: {self.empresa}, Estado: {self.estado}, Porcentaje: {self.porcentaje}%\n"
-        for subtarea in self.subtareas:
-            ret += subtarea.__str__(nivel + 1)
-        return ret
+
+    def __str__(self):
+        return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Fecha de Inicio: {self.fecha_inicio}, Fecha de Vencimiento: {self.fecha_vencimiento}, Estado: {self.estado}, Encargado: {self.encargado}"
 
     def to_dict(self):
         return {
             "id": self.id,
             "nombre": self.nombre,
-            "empresa": self.empresa,
             "descripcion": self.descripcion,
             "fecha_inicio": self.fecha_inicio,
             "fecha_vencimiento": self.fecha_vencimiento,
             "estado": self.estado,
-            "porcentaje": self.porcentaje,
+            "encargado": self.encargado,
             "subtareas": [subtarea.to_dict() for subtarea in self.subtareas]
         }
 
 class GestionTareas:
     def __init__(self, archivo_datos):
         self.archivo_datos = archivo_datos
-        self.proyectos = self.cargar_datos()
+        self.proyectos = []
+        self.tareas = []
+        self.cargar_datos()
 
     def cargar_datos(self):
         try:
             with open(self.archivo_datos, 'r') as archivo:
                 datos = json.load(archivo)
-                return [self._dict_a_tarea(proyecto) for proyecto in datos]
+                self.proyectos = [item for item in datos if 'tareas' in item]
+                self.tareas = [self._dict_a_tarea(item) for item in datos if 'tareas' not in item]
         except FileNotFoundError:
-            return []
+            self.proyectos = []
+            self.tareas = []
 
     def guardar_datos(self):
+        datos = [proyecto for proyecto in self.proyectos]
+        datos.extend([tarea.to_dict() for tarea in self.tareas])
         with open(self.archivo_datos, 'w') as archivo:
-            json.dump([proyecto.to_dict() for proyecto in self.proyectos], archivo, indent=4)
+            json.dump(datos, archivo, indent=4)
 
     def _dict_a_tarea(self, datos):
         tarea = Tarea(
@@ -406,20 +530,36 @@ class GestionTareas:
             datos["fecha_inicio"],
             datos["fecha_vencimiento"],
             datos["estado"],
-            datos["porcentaje"]
+            datos.get("responsable", None)  # Asegura que se maneje correctamente si no existe
         )
-        for subtarea in datos["subtareas"]:
-            tarea.agregar_subtarea(self._dict_a_tarea(subtarea))
+        if "subtareas" in datos:
+            for subtarea in datos["subtareas"]:
+                tarea.agregar_subtarea(self._dict_a_tarea(subtarea))
         return tarea
 
     def agregar_tarea(self, tarea, id_proyecto=None):
-        if id_proyecto is None:
-            self.proyectos.append(tarea)
+        if id_proyecto:
+            for proyecto in self.proyectos:
+                if proyecto['id'] == id_proyecto:
+                    proyecto['tareas'].append(tarea.to_dict())
+                    break
         else:
-            proyecto = self.buscar_tarea_por_id(id_proyecto)
-            if proyecto:
-                proyecto.agregar_subtarea(tarea)
+            self.tareas.append(tarea)
         self.guardar_datos()
+    
+    def listar_tareas(self, id_proyecto):
+        for proyecto in self.proyectos:
+            if proyecto['id'] == id_proyecto:
+                return proyecto['tareas']
+        return []
+    
+    def buscar_tarea(self, id_proyecto, id_tarea):
+        for proyecto in self.proyectos:
+            if proyecto['id'] == id_proyecto:
+                for tarea in proyecto['tareas']:
+                    if tarea['id'] == id_tarea:
+                        return tarea
+        return None
 
     def modificar_tarea(self, id, nombre=None, empresa=None, descripcion=None, fecha_inicio=None, fecha_vencimiento=None, estado=None, porcentaje=None):
         tarea = self.buscar_tarea_por_id(id)
@@ -477,7 +617,12 @@ class GestionTareas:
 
     def listar_tareas(self):
         for proyecto in self.proyectos:
-            print(proyecto)
+            print(f"Proyecto: {proyecto['nombre']}")
+            for tarea in proyecto['tareas']:
+                print(f"  {tarea['nombre']}")
+        print("Tareas individuales:")
+        for tarea in self.tareas:
+            print(f"  {tarea.nombre}")
 
     def listar_tareas_nivel(self, nivel):
         self._listar_nivel(self.proyectos, nivel, 0)
@@ -488,16 +633,36 @@ class GestionTareas:
                 print(tarea)
         else:
             for tarea in tareas:
-                self._listar_nivel(tarea.subtareas, nivel, actual + 1)
+                if isinstance(tarea, dict) and 'subtareas' in tarea:
+                    self._listar_nivel(tarea['subtareas'], nivel, actual + 1)
+                elif isinstance(tarea, Tarea):
+                    self._listar_nivel(tarea.subtareas, nivel, actual + 1)
+                
+    def buscar_proyecto_por_id(self, id_proyecto):
+        for proyecto in self.proyectos:
+            if proyecto['id'] == id_proyecto:
+                return proyecto
+        return None
 
 # Ejemplo de uso
-gestion_tareas = GestionTareas('datos_tareas.json')
-tarea_principal = Tarea('1', 'Proyecto Principal', 'Empresa 1', 'Descripción del proyecto principal', '2023-01-01', '2023-12-31', 'En progreso', 50)
-subtarea1 = Tarea('1.1', 'Subtarea 1', 'Empresa 1', 'Descripción de la subtarea 1', '2023-01-02', '2023-01-31', 'En progreso', 20)
-subtarea2 = Tarea('1.2', 'Subtarea 2', 'Empresa 1', 'Descripción de la subtarea 2', '2023-02-01', '2023-02-28', 'No iniciada', 0)
+gestion_tareas = GestionTareas('Parcial V Estructuras Arboles\\datos_tareas.json')
+gestion_empresas = GestionEmpresas('empresas.csv')
+gestion_empresas.crear_empresa('1', 'Empresa A', 'Descripción A', '2023-01-01', 'Direccion A', '123456789', 'correoA@empresa.com', 'Gerente A', 'Equipo A')
+gestion_empresas.crear_empresa('2', 'Empresa B', 'Descripción B', '2023-02-01', 'Direccion B', '987654321', 'correoB@empresa.com', 'Gerente B', 'Equipo B')
+gestion_empresas.listar_empresas()
+# Crear una tarea principal
+tarea_principal = Tarea('1', 'Tarea Principal', 'Descripción Tarea Principal', '2023-01-01', '2023-12-31', 'En progreso', 'Juan Pérez')
+
+# Crear una subtarea
+subtarea1 = Tarea('1.1', 'Subtarea 1', 'Descripción Subtarea 1', '2023-01-15', '2023-06-30', 'En progreso', 'María López')
+
+# Agregar la subtarea a la tarea principal
 tarea_principal.agregar_subtarea(subtarea1)
-tarea_principal.agregar_subtarea(subtarea2)
-gestion_tareas.agregar_tarea(tarea_principal)
+
+print(tarea_principal)
+for subtarea in tarea_principal.subtareas:
+    print(subtarea)
+gestion_tareas.agregar_tarea(tarea_principal, id_proyecto='1') 
 gestion_tareas.listar_tareas()
 gestion_tareas.listar_tareas_nivel(1)
 #4.- Modulo de Gestión de Sprint----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -767,8 +932,8 @@ class GestionSprints:
 # Ejemplo de uso
 gestion_sprints = GestionSprints('datos_sprints.json')
 sprint1 = Sprint('1', 'Sprint 1', '2023-01-01', '2023-01-14', 'En progreso', 'Objetivo del Sprint 1', 'Equipo 1')
-tarea1 = Tarea('1', 'Tarea 1', 'Empresa 1', 'Descripción de la tarea 1', '2023-01-01', '2023-01-10', 'En progreso', 50)
-tarea2 = Tarea('2', 'Tarea 2', 'Empresa 1', 'Descripción de la tarea 2', '2023-01-02', '2023-01-12', 'No iniciada', 0)
+tarea1 = Tarea('1', 'Tarea 1', 'Descripción de la tarea 1', '2023-01-01', '2023-01-10', 'En progreso', 'Messi')
+tarea2 = Tarea('2', 'Tarea 2', 'Descripción de la tarea 2', '2023-01-02', '2023-01-12', 'No iniciada', 'Ronaldo')
 sprint1.agregar_tarea(tarea1)
 sprint1.agregar_tarea(tarea2)
 gestion_sprints.agregar_sprint(sprint1)
@@ -781,41 +946,40 @@ class GestionReportes:
         self.gestion_tareas = gestion_tareas
         self.gestion_sprints = gestion_sprints
 
-class MenuOpciones:
-    def __init__(self):
-                    print("""
-Menú de Opciones:
-1. Identificar y mostrar las tareas críticas.
-2. Listar todos los sprite de un proyecto y nivel especificado.
-3. Listar todas las tareas asignadas a un empleado.
-4. Exportar tareas completadas con duración igual o inferior a un valor.
-""") 
-                    opc = input("ingrese su opcion: ")
-                    if opc=='1':
-                        # Implementar lógica para identificar y mostrar tareas críticas
-                        print("Identificando tareas críticas...")
-                        MenuOpciones()
+def mostrar_menu():
+    print("Seleccione una opción:")
+    print("1. Identificar y mostrar tareas críticas")
+    print("2. Listar sprites de un proyecto en un nivel específico")
+    print("3. Listar tareas asignadas a un empleado")
+    print("4. Exportar tareas completadas a CSV")
+    print("0. Salir")
 
-                    elif opc=='2':
-                        # Implementar lógica para listar todos los sprites de un proyecto y nivel especificado
-                        print("Listando sprites...")
-                        MenuOpciones()
-                    elif opc=='3':
-                        # Implementar lógica para listar todas las tareas asignadas a un empleado
-                        print("Listando tareas de un empleado...")
-                        MenuOpciones()
+gestion_empresas = GestionEmpresas('empresas.csv')
+gestion_proyectos = GestionProyectos(gestion_empresas)
 
-                    elif opc=='4':
-                        # Implementar lógica para exportar tareas completadas
-                        print("Exportando tareas completadas...")
-                        MenuOpciones()
-                    else:
-                        print("opcion incorrecta")
-                        MenuOpciones()
+while True:
+    mostrar_menu()
+    opcion = input("Opción: ")
+    if opcion == '1':
+        gestion_proyectos.identificar_tareas_criticas()
+    elif opcion == '2':
+        id_proyecto = input("Ingrese el ID del proyecto: ")
+        nivel = int(input("Ingrese el nivel del árbol: "))
+        gestion_proyectos.listar_sprites_nivel(id_proyecto, nivel)
+    elif opcion == '3':
+        cedula = input("Ingrese la cédula del empleado: ")
+        gestion_proyectos.listar_tareas_empleado(cedula)
+    elif opcion == '4':
+        id_proyecto = input("Ingrese el ID del proyecto: ")
+        duracion_max = int(input("Ingrese la duración máxima en horas: "))
+        gestion_proyectos.exportar_tareas_completadas(id_proyecto, duracion_max)
+    elif opcion == '0':
+        break
+    else:
+        print("Opción no válida. Intente de nuevo.")
                     
                     
 
 # Ejemplo de uso
 gestion_reportes = GestionReportes(gestion_proyectos, gestion_tareas, gestion_sprints)
-MenuOpciones()
 

@@ -1,0 +1,33 @@
+[
+    {
+        "id": "1",
+        "nombre": "Sprint 1",
+        "fecha_inicio": "2023-01-01",
+        "fecha_fin": "2023-01-14",
+        "estado": "En progreso",
+        "objetivos": "Objetivo del Sprint 1",
+        "equipo": "Equipo 1",
+        "tareas": [
+            {
+                "id": "1",
+                "nombre": "Tarea 1",
+                "descripcion": "Descripci\u00f3n de la tarea 1",
+                "fecha_inicio": "2023-01-01",
+                "fecha_vencimiento": "2023-01-10",
+                "estado": "En progreso",
+                "encargado": "Messi",
+                "subtareas": []
+            },
+            {
+                "id": "2",
+                "nombre": "Tarea 2",
+                "descripcion": "Descripci\u00f3n de la tarea 2",
+                "fecha_inicio": "2023-01-02",
+                "fecha_vencimiento": "2023-01-12",
+                "estado": "No iniciada",
+                "encargado": "Ronaldo",
+                "subtareas": []
+            }
+        ]
+    }
+]

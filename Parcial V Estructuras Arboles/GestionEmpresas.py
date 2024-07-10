@@ -1,17 +1,56 @@
-"""
-Estructura de Árboles
-
-Elaborado por:
-
-- Cristian Guevara. C.I: 31.567.525
-- Rodrigo Torres. C.I: 31.014.592
-"""
-import json
+import csv
 from datetime import datetime
 
 
-#1.- Modulo de Gestión de Empreseas--------------------------------------------------------------------------------------------------------------------------------------------
-import csv
+#----Modulo 1----------------------------------------------------------------------------------
+class Nodo:
+    def __init__(self, empresa):
+        self.empresa = empresa
+        self.siguiente = None
+
+class ListaEnlazada:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar(self, empresa):
+        nuevo_nodo = Nodo(empresa)
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
+
+    def eliminar(self, id):
+        if not self.cabeza:
+            return False
+        if self.cabeza.empresa.id == id:
+            self.cabeza = self.cabeza.siguiente
+            return True
+        actual = self.cabeza
+        while actual.siguiente:
+            if actual.siguiente.empresa.id == id:
+                actual.siguiente = actual.siguiente.siguiente
+                return True
+            actual = actual.siguiente
+        return False
+
+    def buscar(self, id):
+        actual = self.cabeza
+        while actual:
+            if actual.empresa.id == id:
+                return actual.empresa
+            actual = actual.siguiente
+        return None
+
+    def listar(self):
+        empresas = []
+        actual = self.cabeza
+        while actual:
+            empresas.append(actual.empresa)
+            actual = actual.siguiente
+        return empresas
 
 class Empresa:
     def __init__(self, id, nombre, descripcion, fecha_creacion, direccion, telefono, correo, gerente, equipo_contacto):
@@ -29,957 +68,456 @@ class Empresa:
     def __str__(self):
         return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Fecha de Creación: {self.fecha_creacion}, Dirección: {self.direccion}, Teléfono: {self.telefono}, Correo: {self.correo}, Gerente: {self.gerente}, Equipo de Contacto: {self.equipo_contacto}"
 
+class Proyecto:
+    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, gerente, equipo):
+        self.id = id
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.fecha_inicio = fecha_inicio
+        self.fecha_vencimiento = fecha_vencimiento
+        self.estado_actual = estado_actual
+        self.gerente = gerente
+        self.equipo = equipo
+
+    def __str__(self):
+        return f"Nombre: {self.nombre}, Descripción: {self.descripcion}"
+
 class GestionEmpresas:
     def __init__(self, archivo_csv):
         self.archivo_csv = archivo_csv
-        self.empresas = self.cargar_empresas()
+        self.empresas = ListaEnlazada()
+        self.cargar_empresas()
+        self.gestion_proyectos = GestionProyectos()
 
     def cargar_empresas(self):
-        empresas = []
         try:
             with open(self.archivo_csv, newline='') as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
                     empresa = Empresa(
-                        row.get('id', ''),
-                        row.get('nombre', ''),
-                        row.get('descripcion', ''),
-                        row.get('fecha_creacion', ''),
-                        row.get('direccion', ''),
-                        row.get('telefono', ''),
-                        row.get('correo', ''),
-                        row.get('gerente', ''),
-                        row.get('equipo_contacto', '')
+                        row['id'],
+                        row['nombre'],
+                        row['descripcion'],
+                        row['fecha_creacion'],
+                        row['direccion'],
+                        row['telefono'],
+                        row['correo'],
+                        row['gerente'],
+                        row['equipo_contacto']
                     )
-                    empresas.append(empresa)
+                    self.empresas.agregar(empresa)
         except FileNotFoundError:
-            pass
-        return empresas
-
-    def cargar_empresas(self):
-        empresas = []
-        try:
-            with open(self.archivo_csv, newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    empresa = Empresa(
-                        row.get('id', ''),
-                        row.get('nombre', ''),
-                        row.get('descripcion', ''),
-                        row.get('fecha_creacion', ''),
-                        row.get('direccion', ''),
-                        row.get('telefono', ''),
-                        row.get('correo', ''),
-                        row.get('gerente', ''),
-                        row.get('equipo_contacto', '')
-                    )
-                    empresas.append(empresa)
-        except FileNotFoundError:
-            pass
-        return empresas
+            print(f"El archivo {self.archivo_csv} no se encontró. Se creará uno nuevo.")
 
     def guardar_empresas(self):
         with open(self.archivo_csv, 'w', newline='') as csvfile:
             fieldnames = ['id', 'nombre', 'descripcion', 'fecha_creacion', 'direccion', 'telefono', 'correo', 'gerente', 'equipo_contacto']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
-            for empresa in self.empresas:
-                writer.writerow({'id': empresa.id, 'nombre': empresa.nombre, 'descripcion': empresa.descripcion, 'fecha_creacion': empresa.fecha_creacion, 'direccion': empresa.direccion, 'telefono': empresa.telefono, 'correo': empresa.correo, 'gerente': empresa.gerente, 'equipo_contacto': empresa.equipo_contacto})
+            for empresa in self.empresas.listar():
+                writer.writerow({
+                    'id': empresa.id,
+                    'nombre': empresa.nombre,
+                    'descripcion': empresa.descripcion,
+                    'fecha_creacion': empresa.fecha_creacion,
+                    'direccion': empresa.direccion,
+                    'telefono': empresa.telefono,
+                    'correo': empresa.correo,
+                    'gerente': empresa.gerente,
+                    'equipo_contacto': empresa.equipo_contacto
+                })
 
     def crear_empresa(self, id, nombre, descripcion, fecha_creacion, direccion, telefono, correo, gerente, equipo_contacto):
         nueva_empresa = Empresa(id, nombre, descripcion, fecha_creacion, direccion, telefono, correo, gerente, equipo_contacto)
-        self.empresas.append(nueva_empresa)
+        self.empresas.agregar(nueva_empresa)
         self.guardar_empresas()
 
     def listar_empresas(self):
-        for empresa in self.empresas:
+        for empresa in self.empresas.listar():
             print(empresa)
 
-    def buscar_empresa(self, id):
-        for empresa in self.empresas:
-            if empresa.id == id:
-                return empresa
-        return None
+    def buscar_empresa(self, id_empresa):
+        return self.empresas.buscar(id_empresa)
 
-    def modificar_empresa(self, id, nombre=None, descripcion=None, fecha_creacion=None, direccion=None, telefono=None, correo=None, gerente=None, equipo_contacto=None):
+    def modificar_empresa(self, id, **kwargs):
         empresa = self.buscar_empresa(id)
         if empresa:
-            if nombre:
-                empresa.nombre = nombre
-            if descripcion:
-                empresa.descripcion = descripcion
-            if fecha_creacion:
-                empresa.fecha_creacion = fecha_creacion
-            if direccion:
-                empresa.direccion = direccion
-            if telefono:
-                empresa.telefono = telefono
-            if correo:
-                empresa.correo = correo
-            if gerente:
-                empresa.gerente = gerente
-            if equipo_contacto:
-                empresa.equipo_contacto = equipo_contacto
+            for key, value in kwargs.items():
+                setattr(empresa, key, value)
             self.guardar_empresas()
             return True
         return False
 
     def eliminar_empresa(self, id):
-        empresa = self.buscar_empresa(id)
-        if empresa:
-            self.empresas.remove(empresa)
+        if self.empresas.eliminar(id):
             self.guardar_empresas()
             return True
         return False
 
-    def agregar_proyecto(self, id_empresa, proyecto):
+    def agregar_proyecto(self, id_empresa, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, gerente, equipo):
         empresa = self.buscar_empresa(id_empresa)
         if empresa:
+            proyecto = Proyecto(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, gerente, equipo)
             empresa.proyectos.append(proyecto)
-            self.guardar_empresas()
+            return True
+        return False
 
-# Ejemplo de uso
-gestion_empresas = GestionEmpresas('empresas.csv')
-gestion_empresas.crear_empresa('1', 'Empresa A', 'Descripción A', '2023-01-01', 'Direccion A', '123456789', 'correoA@empresa.com', 'Gerente A', 'Equipo A')
-gestion_empresas.crear_empresa('2', 'Empresa B', 'Descripción B', '2023-02-01', 'Direccion B', '987654321', 'correoB@empresa.com', 'Gerente B', 'Equipo B')
-gestion_empresas.listar_empresas()
+    def listar_proyectos(self, id_empresa):
+        empresa = self.buscar_empresa(id_empresa)
+        if empresa:
+            if empresa.proyectos:
+                print("Proyectos de la empresa:", empresa.nombre)
+                for proyecto in empresa.proyectos:
+                    print(f"ID: {proyecto.id}, Nombre: {proyecto.nombre}, Descripción: {proyecto.descripcion}, Fecha de inicio: {proyecto.fecha_inicio}, Fecha de vencimiento: {proyecto.fecha_vencimiento}, Estado actual: {proyecto.estado_actual}, Gerente: {proyecto.gerente}, Equipo: {', '.join(proyecto.equipo)}")
+                return True
+            else:
+                print("La empresa no tiene proyectos.")
+                return False
+        else:
+            print("No se encontró la empresa con el ID proporcionado.")
+            return False
+        
+    def listar_proyectos_empresa(gestion_empresas):
+        id = input("Ingrese el ID de la empresa para listar sus proyectos: ")
+        if gestion_empresas.listar_proyectos(id):
+            print("Listado de proyectos completado.")
+        else:
+            print("No se encontró la empresa o no tiene proyectos.")
 
-
-#2.- Modulo de Gestión de Proyectos------------------------------------------------------------------------------------------------------------------------------------------------
-class Proyecto:
-    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, empresa, gerente, equipo, tareas=None):
-        self.id = id
-        self.nombre = nombre
-        self.descripcion = descripcion
-        self.fecha_inicio = fecha_inicio
-        self.fecha_vencimiento = fecha_vencimiento
-        self.estado = estado
-        self.empresa = empresa
-        self.gerente = gerente
-        self.equipo = equipo
-        self.tareas = tareas if tareas else []
-
-    def tiempo_restante(self):
-        return (datetime.strptime(self.fecha_vencimiento, '%Y-%m-%d') - datetime.now()).days
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "nombre": self.nombre,
-            "descripcion": self.descripcion,
-            "fecha_inicio": self.fecha_inicio,
-            "fecha_vencimiento": self.fecha_vencimiento,
-            "estado": self.estado,
-            "empresa": self.empresa,
-            "gerente": self.gerente,
-            "equipo": self.equipo,
-            "tareas": [tarea.to_dict() for tarea in self.tareas]
-        }
-    
-    def __str__(self):
-        return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Fecha de Inicio: {self.fecha_inicio}, Fecha de Vencimiento: {self.fecha_vencimiento}, Estado: {self.estado}, Empresa: {self.empresa}, Gerente: {self.gerente}, Equipo: {self.equipo}"
+#---Modulo 2-----------------------------------------------------------------------------------------------
 
 class NodoAVL:
     def __init__(self, proyecto):
         self.proyecto = proyecto
-        self.altura = 1
         self.izquierda = None
         self.derecha = None
+        self.altura = 1
 
 class ArbolAVL:
     def __init__(self):
         self.raiz = None
 
-    def obtener_altura(self, nodo):
+    def altura(self, nodo):
         if not nodo:
             return 0
         return nodo.altura
 
-    def balancear(self, nodo):
+    def balance(self, nodo):
         if not nodo:
             return 0
-        return self.obtener_altura(nodo.izquierda) - self.obtener_altura(nodo.derecha)
+        return self.altura(nodo.izquierda) - self.altura(nodo.derecha)
 
-    def rotar_derecha(self, y):
+    def rotacion_derecha(self, y):
         x = y.izquierda
         T2 = x.derecha
-
         x.derecha = y
         y.izquierda = T2
-
-        y.altura = max(self.obtener_altura(y.izquierda), self.obtener_altura(y.derecha)) + 1
-        x.altura = max(self.obtener_altura(x.izquierda), self.obtener_altura(x.derecha)) + 1
-
+        y.altura = max(self.altura(y.izquierda), self.altura(y.derecha)) + 1
+        x.altura = max(self.altura(x.izquierda), self.altura(x.derecha)) + 1
         return x
 
-    def rotar_izquierda(self, x):
+    def rotacion_izquierda(self, x):
         y = x.derecha
         T2 = y.izquierda
-
         y.izquierda = x
         x.derecha = T2
-
-        x.altura = max(self.obtener_altura(x.izquierda), self.obtener_altura(x.derecha)) + 1
-        y.altura = max(self.obtener_altura(y.izquierda), self.obtener_altura(y.derecha)) + 1
-
+        x.altura = max(self.altura(x.izquierda), self.altura(x.derecha)) + 1
+        y.altura = max(self.altura(y.izquierda), self.altura(y.derecha)) + 1
         return y
 
-    def insertar(self, nodo, proyecto):
-        if not nodo:
+    def insertar(self, raiz, proyecto):
+        if not raiz:
             return NodoAVL(proyecto)
-
-        if proyecto.tiempo_restante() < nodo.proyecto.tiempo_restante():
-            nodo.izquierda = self.insertar(nodo.izquierda, proyecto)
+        if proyecto.tiempo_restante > raiz.proyecto.tiempo_restante:
+            raiz.izquierda = self.insertar(raiz.izquierda, proyecto)
         else:
-            nodo.derecha = self.insertar(nodo.derecha, proyecto)
+            raiz.derecha = self.insertar(raiz.derecha, proyecto)
 
-        nodo.altura = max(self.obtener_altura(nodo.izquierda), self.obtener_altura(nodo.derecha)) + 1
+        raiz.altura = 1 + max(self.altura(raiz.izquierda), self.altura(raiz.derecha))
+        balance = self.balance(raiz)
 
-        balance = self.balancear(nodo)
+        if balance > 1:
+            if proyecto.tiempo_restante > raiz.izquierda.proyecto.tiempo_restante:
+                return self.rotacion_derecha(raiz)
+            else:
+                raiz.izquierda = self.rotacion_izquierda(raiz.izquierda)
+                return self.rotacion_derecha(raiz)
 
-        if balance > 1 and proyecto.tiempo_restante() < nodo.izquierda.proyecto.tiempo_restante():
-            return self.rotar_derecha(nodo)
+        if balance < -1:
+            if proyecto.tiempo_restante <= raiz.derecha.proyecto.tiempo_restante:
+                return self.rotacion_izquierda(raiz)
+            else:
+                raiz.derecha = self.rotacion_derecha(raiz.derecha)
+                return self.rotacion_izquierda(raiz)
 
-        if balance < -1 and proyecto.tiempo_restante() > nodo.derecha.proyecto.tiempo_restante():
-            return self.rotar_izquierda(nodo)
+        return raiz
 
-        if balance > 1 and proyecto.tiempo_restante() > nodo.izquierda.proyecto.tiempo_restante():
-            nodo.izquierda = self.rotar_izquierda(nodo.izquierda)
-            return self.rotar_derecha(nodo)
+    def insertar_proyecto(self, proyecto):
+        self.raiz = self.insertar(self.raiz, proyecto)
 
-        if balance < -1 and proyecto.tiempo_restante() < nodo.derecha.proyecto.tiempo_restante():
-            nodo.derecha = self.rotar_derecha(nodo.derecha)
-            return self.rotar_izquierda(nodo)
-
-        return nodo
-
-    def preorden(self, nodo):
-        if not nodo:
-            return
-        print(nodo.proyecto)
-        self.preorden(nodo.izquierda)
-        self.preorden(nodo.derecha)
-
-    def buscar(self, nodo, criterio, valor):
-        if not nodo:
-            return None
-
-        if getattr(nodo.proyecto, criterio) == valor:
-            return nodo.proyecto
-
-        if getattr(nodo.proyecto, criterio) < valor:
-            return self.buscar(nodo.derecha, criterio, valor)
-        else:
-            return self.buscar(nodo.izquierda, criterio, valor)
-
-    def eliminar(self, nodo, proyecto):
-        if not nodo:
-            return nodo
-
-        if proyecto.tiempo_restante() < nodo.proyecto.tiempo_restante():
-            nodo.izquierda = self.eliminar(nodo.izquierda, proyecto)
-        elif proyecto.tiempo_restante() > nodo.proyecto.tiempo_restante():
-            nodo.derecha = self.eliminar(nodo.derecha, proyecto)
-        else:
-            if not nodo.izquierda:
-                return nodo.derecha
-            elif not nodo.derecha:
-                return nodo.izquierda
-
-            temp = self.obtener_nodo_menor_valor(nodo.derecha)
-            nodo.proyecto = temp.proyecto
-            nodo.derecha = self.eliminar(nodo.derecha, temp.proyecto)
-
-        if not nodo:
-            return nodo
-
-        nodo.altura = max(self.obtener_altura(nodo.izquierda), self.obtener_altura(nodo.derecha)) + 1
-
-        balance = self.balancear(nodo)
-
-        if balance > 1 and self.balancear(nodo.izquierda) >= 0:
-            return self.rotar_derecha(nodo)
-
-        if balance > 1 and self.balancear(nodo.izquierda) < 0:
-            nodo.izquierda = self.rotar_izquierda(nodo.izquierda)
-            return self.rotar_derecha(nodo)
-
-        if balance < -1 and self.balancear(nodo.derecha) <= 0:
-            return self.rotar_izquierda(nodo)
-
-        if balance < -1 and self.balancear(nodo.derecha) > 0:
-            nodo.derecha = self.rotar_derecha(nodo.derecha)
-            return self.rotar_izquierda(nodo)
-
-        return nodo
-
-    def obtener_nodo_menor_valor(self, nodo):
-        if nodo is None or nodo.izquierda is None:
-            return nodo
-        return self.obtener_nodo_menor_valor(nodo.izquierda)
-
-    def actualizar_arbol(self, nodo):
-        if not nodo:
-            return None
-        proyectos = []
-        self.recolectar_proyectos(nodo, proyectos)
-        self.raiz = None
-        for proyecto in proyectos:
-            self.raiz = self.insertar(self.raiz, proyecto)
-
-    def recolectar_proyectos(self, nodo, proyectos):
-        if not nodo:
-            return
-        proyectos.append(nodo.proyecto)
-        self.recolectar_proyectos(nodo.izquierda, proyectos)
-        self.recolectar_proyectos(nodo.derecha, proyectos)
-
-class GestionProyectos:
-    def __init__(self, gestion_empresas):
-        self.gestion_empresas = gestion_empresas
-        self.arbol_avl = ArbolAVL()
-
-    def crear_proyecto(self, id, empresa_id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, gerente, equipo):
-        nuevo_proyecto = Proyecto(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, empresa_id, gerente, equipo)
-        empresa = self.gestion_empresas.buscar_empresa(empresa_id)
-        if empresa:
-            empresa.proyectos.append(nuevo_proyecto)
-            self.arbol_avl.raiz = self.arbol_avl.insertar(self.arbol_avl.raiz, nuevo_proyecto)
-
-    def modificar_proyecto(self, id, nombre=None, descripcion=None, fecha_inicio=None, fecha_vencimiento=None, estado=None, gerente=None, equipo=None):
-        proyecto = self.buscar_proyecto_por_id(id)
-        if proyecto:
-            if nombre:
-                proyecto.nombre = nombre
-            if descripcion:
-                proyecto.descripcion = descripcion
-            if fecha_inicio:
-                proyecto.fecha_inicio = fecha_inicio
-            if fecha_vencimiento:
-                proyecto.fecha_vencimiento = fecha_vencimiento
-            if estado:
-                proyecto.estado = estado
-            if gerente:
-                proyecto.gerente = gerente
-            if equipo:
-                proyecto.equipo = equipo
-            self.arbol_avl.actualizar_arbol(self.arbol_avl.raiz)
-            return True
-        return False
+    def buscar(self, raiz, criterio, valor):
+        if not raiz:
+            return []
+        resultados = []
+        if getattr(raiz.proyecto, criterio) == valor:
+            resultados.append(raiz.proyecto)
+        resultados.extend(self.buscar(raiz.izquierda, criterio, valor))
+        resultados.extend(self.buscar(raiz.derecha, criterio, valor))
+        return resultados
 
     def buscar_proyecto(self, criterio, valor):
-        return self.arbol_avl.buscar(self.arbol_avl.raiz, criterio, valor)
+        return self.buscar(self.raiz, criterio, valor)
 
-    def buscar_proyecto_por_id(self, id):
-        return self.buscar_proyecto('id', id)
+    def actualizar_tiempo_restante(self):
+        self.actualizar_tiempo_restante_recursivo(self.raiz)
 
-    def eliminar_proyecto(self, id):
-        proyecto = self.buscar_proyecto_por_id(id)
-        if proyecto:
-            self.arbol_avl.raiz = self.arbol_avl.eliminar(self.arbol_avl.raiz, proyecto)
-            empresa = self.gestion_empresas.buscar_empresa(proyecto.empresa)
-            if empresa:
-                empresa.proyectos.remove(proyecto)
-            return True
-        return False
+    def actualizar_tiempo_restante_recursivo(self, nodo):
+        if nodo:
+            nodo.proyecto.actualizar_tiempo_restante()
+            self.actualizar_tiempo_restante_recursivo(nodo.izquierda)
+            self.actualizar_tiempo_restante_recursivo(nodo.derecha)
 
-    def listar_proyectos(self):
-        self.arbol_avl.preorden(self.arbol_avl.raiz)
-        
-    def identificar_tareas_criticas(self):
-        tareas_criticas = []
-        self.postorden_tareas_criticas(self.arbol_avl.raiz, tareas_criticas)
-        for tarea in tareas_criticas:
-            print(tarea)
-
-    def postorden_tareas_criticas(self, nodo, tareas_criticas):
-        if not nodo:
-            return
-        self.postorden_tareas_criticas(nodo.izquierda, tareas_criticas)
-        self.postorden_tareas_criticas(nodo.derecha, tareas_criticas)
-        if nodo.proyecto.estado == 'critico':  # Ejemplo de criterio para identificar tareas críticas
-            tareas_criticas.append(nodo.proyecto)
-
-    def listar_sprites_nivel(self, id_proyecto, nivel):
-        proyecto = self.buscar_proyecto_por_id(id_proyecto)
-        if proyecto:
-            self.listar_tareas_nivel(proyecto.tareas, nivel)
-
-    def listar_tareas_nivel(self, tareas, nivel, actual=0):
-        if actual == nivel:
-            for tarea in tareas:
-                print(tarea)
-        else:
-            for tarea in tareas:
-                self.listar_tareas_nivel(tarea.subtareas, nivel, actual + 1)
-
-    def listar_tareas_empleado(self, cedula):
-        for empresa in self.gestion_empresas.empresas:
-            for proyecto in empresa.proyectos:
-                horas_total = 0
-                tareas_empleado = []
-                self.postorden_tareas_empleado(proyecto.tareas, cedula, tareas_empleado, horas_total)
-                if tareas_empleado:
-                    print(f"Proyecto {proyecto.id} - {horas_total} horas")
-                    for tarea in tareas_empleado:
-                        print(f"- {tarea.nombre} {tarea.duracion_horas} horas")
-
-    def postorden_tareas_empleado(self, tareas, cedula, tareas_empleado, horas_total):
-        for tarea in tareas:
-            self.postorden_tareas_empleado(tarea.subtareas, cedula, tareas_empleado, horas_total)
-            if tarea.responsable == cedula:
-                tareas_empleado.append(tarea)
-                horas_total += tarea.duracion_horas
-
-    def exportar_tareas_completadas(self, id_proyecto, duracion_max):
-        proyecto = self.buscar_proyecto_por_id(id_proyecto)
-        if proyecto:
-            tareas_completadas = []
-            self.postorden_exportar_tareas(proyecto.tareas, duracion_max, tareas_completadas)
-            with open('tareas_completadas.csv', 'w', newline='') as csvfile:
-                fieldnames = ['id', 'nombre', 'descripcion', 'duracion_horas', 'costo', 'responsable']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                for tarea in tareas_completadas:
-                    writer.writerow({'id': tarea.id, 'nombre': tarea.nombre, 'descripcion': tarea.descripcion, 'duracion_horas': tarea.duracion_horas, 'costo': tarea.costo, 'responsable': tarea.responsable})
-
-    def postorden_exportar_tareas(self, tareas, duracion_max, tareas_completadas):
-        for tarea in tareas:
-            self.postorden_exportar_tareas(tarea.subtareas, duracion_max, tareas_completadas)
-            if tarea.duracion_horas <= duracion_max:
-                tareas_completadas.append(tarea)
-
-    def buscar_proyecto_por_id(self, id):
-        for empresa in self.gestion_empresas.empresas:
-            for proyecto in empresa.proyectos:
-                if proyecto.id == id:
-                    return proyecto
-        return None
-    
-    
-
-# Ejemplo de uso
-gestion_proyectos = GestionProyectos(gestion_empresas)
-gestion_proyectos.crear_proyecto('1', '1', 'Proyecto A', 'Descripción A', '2023-01-01', '2023-12-31', 'En progreso', 'Gerente A', 'Equipo A')
-gestion_proyectos.crear_proyecto('2', '2', 'Proyecto B', 'Descripción B', '2023-02-01', '2023-11-30', 'En progreso', 'Gerente B', 'Equipo B')
-gestion_proyectos.listar_proyectos()
-
-#3.- Modulo de Gestión de Tareas y Prioridades--------------------------------------------------------------------------------------------------------------------------------------
-class Tarea:
-    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado, encargado):
+class Proyecto:
+    def __init__(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo):
         self.id = id
         self.nombre = nombre
         self.descripcion = descripcion
-        self.fecha_inicio = fecha_inicio
-        self.fecha_vencimiento = fecha_vencimiento
-        self.estado = estado
-        self.encargado = encargado
-        self.subtareas = []  # Inicializamos la lista de subtareas
-
-    def agregar_subtarea(self, subtarea):
-        self.subtareas.append(subtarea)
-        
-    def eliminar_subtarea(self, subtarea_id):
-        self.subtareas = [sub for sub in self.subtareas if sub.id != subtarea_id]
-
-
-    def __str__(self):
-        return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Fecha de Inicio: {self.fecha_inicio}, Fecha de Vencimiento: {self.fecha_vencimiento}, Estado: {self.estado}, Encargado: {self.encargado}"
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "nombre": self.nombre,
-            "descripcion": self.descripcion,
-            "fecha_inicio": self.fecha_inicio,
-            "fecha_vencimiento": self.fecha_vencimiento,
-            "estado": self.estado,
-            "encargado": self.encargado,
-            "subtareas": [subtarea.to_dict() for subtarea in self.subtareas]
-        }
-
-class GestionTareas:
-    def __init__(self, archivo_datos):
-        self.archivo_datos = archivo_datos
-        self.proyectos = []
-        self.tareas = []
-        self.cargar_datos()
-
-    def cargar_datos(self):
-        try:
-            with open(self.archivo_datos, 'r') as archivo:
-                datos = json.load(archivo)
-                self.proyectos = [item for item in datos if 'tareas' in item]
-                self.tareas = [self._dict_a_tarea(item) for item in datos if 'tareas' not in item]
-        except FileNotFoundError:
-            self.proyectos = []
-            self.tareas = []
-
-    def guardar_datos(self):
-        datos = [proyecto for proyecto in self.proyectos]
-        datos.extend([tarea.to_dict() for tarea in self.tareas])
-        with open(self.archivo_datos, 'w') as archivo:
-            json.dump(datos, archivo, indent=4)
-
-    def _dict_a_tarea(self, datos):
-        tarea = Tarea(
-            datos["id"],
-            datos["nombre"],
-            datos["empresa"],
-            datos["descripcion"],
-            datos["fecha_inicio"],
-            datos["fecha_vencimiento"],
-            datos["estado"],
-            datos.get("responsable", None)  # Asegura que se maneje correctamente si no existe
-        )
-        if "subtareas" in datos:
-            for subtarea in datos["subtareas"]:
-                tarea.agregar_subtarea(self._dict_a_tarea(subtarea))
-        return tarea
-
-    def agregar_tarea(self, tarea, id_proyecto=None):
-        if id_proyecto:
-            for proyecto in self.proyectos:
-                if proyecto['id'] == id_proyecto:
-                    proyecto['tareas'].append(tarea.to_dict())
-                    break
-        else:
-            self.tareas.append(tarea)
-        self.guardar_datos()
-    
-    def listar_tareas(self, id_proyecto):
-        for proyecto in self.proyectos:
-            if proyecto['id'] == id_proyecto:
-                return proyecto['tareas']
-        return []
-    
-    def buscar_tarea(self, id_proyecto, id_tarea):
-        for proyecto in self.proyectos:
-            if proyecto['id'] == id_proyecto:
-                for tarea in proyecto['tareas']:
-                    if tarea['id'] == id_tarea:
-                        return tarea
-        return None
-
-    def modificar_tarea(self, id, nombre=None, empresa=None, descripcion=None, fecha_inicio=None, fecha_vencimiento=None, estado=None, porcentaje=None):
-        tarea = self.buscar_tarea_por_id(id)
-        if tarea:
-            if nombre:
-                tarea.nombre = nombre
-            if empresa:
-                tarea.empresa = empresa
-            if descripcion:
-                tarea.descripcion = descripcion
-            if fecha_inicio:
-                tarea.fecha_inicio = fecha_inicio
-            if fecha_vencimiento:
-                tarea.fecha_vencimiento = fecha_vencimiento
-            if estado:
-                tarea.estado = estado
-            if porcentaje is not None:
-                tarea.porcentaje = porcentaje
-            self.guardar_datos()
-            return True
-        return False
-
-    def eliminar_tarea(self, id):
-        tarea, parent = self.buscar_tarea_con_padre(id)
-        if tarea:
-            if parent:
-                parent.subtareas.remove(tarea)
-            else:
-                self.proyectos.remove(tarea)
-            self.guardar_datos()
-            return True
-        return False
-
-    def buscar_tarea_por_id(self, id, nodo=None):
-        if nodo is None:
-            nodo = self.proyectos
-        for tarea in nodo:
-            if tarea.id == id:
-                return tarea
-            subtarea = self.buscar_tarea_por_id(id, tarea.subtareas)
-            if subtarea:
-                return subtarea
-        return None
-
-    def buscar_tarea_con_padre(self, id, nodo=None, parent=None):
-        if nodo is None:
-            nodo = self.proyectos
-        for tarea in nodo:
-            if tarea.id == id:
-                return tarea, parent
-            subtarea, padre = self.buscar_tarea_con_padre(id, tarea.subtareas, tarea)
-            if subtarea:
-                return subtarea, padre
-        return None, None
-
-    def listar_tareas(self):
-        for proyecto in self.proyectos:
-            print(f"Proyecto: {proyecto['nombre']}")
-            for tarea in proyecto['tareas']:
-                print(f"  {tarea['nombre']}")
-        print("Tareas individuales:")
-        for tarea in self.tareas:
-            print(f"  {tarea.nombre}")
-
-    def listar_tareas_nivel(self, nivel):
-        self._listar_nivel(self.proyectos, nivel, 0)
-
-    def _listar_nivel(self, tareas, nivel, actual):
-        if actual == nivel:
-            for tarea in tareas:
-                print(tarea)
-        else:
-            for tarea in tareas:
-                if isinstance(tarea, dict) and 'subtareas' in tarea:
-                    self._listar_nivel(tarea['subtareas'], nivel, actual + 1)
-                elif isinstance(tarea, Tarea):
-                    self._listar_nivel(tarea.subtareas, nivel, actual + 1)
-                
-    def buscar_proyecto_por_id(self, id_proyecto):
-        for proyecto in self.proyectos:
-            if proyecto['id'] == id_proyecto:
-                return proyecto
-        return None
-
-# Ejemplo de uso
-gestion_tareas = GestionTareas('Parcial V Estructuras Arboles\\datos_tareas.json')
-gestion_empresas = GestionEmpresas('empresas.csv')
-gestion_empresas.crear_empresa('1', 'Empresa A', 'Descripción A', '2023-01-01', 'Direccion A', '123456789', 'correoA@empresa.com', 'Gerente A', 'Equipo A')
-gestion_empresas.crear_empresa('2', 'Empresa B', 'Descripción B', '2023-02-01', 'Direccion B', '987654321', 'correoB@empresa.com', 'Gerente B', 'Equipo B')
-gestion_empresas.listar_empresas()
-# Crear una tarea principal
-tarea_principal = Tarea('1', 'Tarea Principal', 'Descripción Tarea Principal', '2023-01-01', '2023-12-31', 'En progreso', 'Juan Pérez')
-
-# Crear una subtarea
-subtarea1 = Tarea('1.1', 'Subtarea 1', 'Descripción Subtarea 1', '2023-01-15', '2023-06-30', 'En progreso', 'María López')
-
-# Agregar la subtarea a la tarea principal
-tarea_principal.agregar_subtarea(subtarea1)
-
-print(tarea_principal)
-for subtarea in tarea_principal.subtareas:
-    print(subtarea)
-gestion_tareas.agregar_tarea(tarea_principal, id_proyecto='1') 
-gestion_tareas.listar_tareas()
-gestion_tareas.listar_tareas_nivel(1)
-#4.- Modulo de Gestión de Sprint----------------------------------------------------------------------------------------------------------------------------------------------------
-class NodoAVL:
-    def __init__(self, sprint):
-        self.sprint = sprint
-        self.izquierda = None
-        self.derecha = None
-        self.altura = 1
-
-class Sprint:
-    def __init__(self, id, nombre, fecha_inicio, fecha_fin, estado, objetivos, equipo):
-        self.id = id
-        self.nombre = nombre
-        self.fecha_inicio = fecha_inicio
-        self.fecha_fin = fecha_fin
-        self.estado = estado
-        self.objetivos = objetivos
+        self.fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+        self.fecha_vencimiento = datetime.strptime(fecha_vencimiento, "%Y-%m-%d")
+        self.estado_actual = estado_actual
+        self.empresa = empresa
+        self.gerente = gerente
         self.equipo = equipo
-        self.tareas = []
+        self.tiempo_restante = (self.fecha_vencimiento - datetime.now()).days
 
-    def agregar_tarea(self, tarea):
-        self.tareas.append(tarea)
+    def actualizar_tiempo_restante(self):
+        self.tiempo_restante = (self.fecha_vencimiento - datetime.now()).days
 
     def __str__(self):
-        ret = f"ID: {self.id}, Nombre: {self.nombre}, Estado: {self.estado}, Objetivos: {self.objetivos}\n"
-        ret += "Tareas:\n"
-        for tarea in self.tareas:
-            ret += f"\t{tarea}\n"
-        return ret
+        return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Fecha de inicio: {self.fecha_inicio.strftime('%Y-%m-%d')}, Fecha de vencimiento: {self.fecha_vencimiento.strftime('%Y-%m-%d')}, Estado actual: {self.estado_actual}, Empresa: {self.empresa}, Gerente: {self.gerente}, Equipo: {self.equipo}, Tiempo restante: {self.tiempo_restante} días"
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "nombre": self.nombre,
-            "fecha_inicio": self.fecha_inicio,
-            "fecha_fin": self.fecha_fin,
-            "estado": self.estado,
-            "objetivos": self.objetivos,
-            "equipo": self.equipo,
-            "tareas": [tarea.to_dict() for tarea in self.tareas]
-        }
-
-class ArbolAVL:
+class GestionProyectos:
     def __init__(self):
-        self.raiz = None
+        self.proyectos = ArbolAVL()
 
-    def insertar(self, sprint):
-        if not self.raiz:
-            self.raiz = NodoAVL(sprint)
-        else:
-            self.raiz = self._insertar(self.raiz, sprint)
+    def crear_proyecto(self, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo):
+        nuevo_proyecto = Proyecto(id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, empresa, gerente, equipo)
+        self.proyectos.insertar_proyecto(nuevo_proyecto)
 
-    def _insertar(self, nodo, sprint):
-        if not nodo:
-            return NodoAVL(sprint)
-        elif sprint.fecha_fin < nodo.sprint.fecha_fin:
-            nodo.izquierda = self._insertar(nodo.izquierda, sprint)
-        else:
-            nodo.derecha = self._insertar(nodo.derecha, sprint)
+    def buscar_proyectos(self, criterio, valor):
+        return self.proyectos.buscar_proyecto(criterio, valor)
 
-        nodo.altura = 1 + max(self._obtener_altura(nodo.izquierda), self._obtener_altura(nodo.derecha))
-
-        balance = self._obtener_balance(nodo)
-        if balance > 1:
-            if sprint.fecha_fin < nodo.izquierda.sprint.fecha_fin:
-                return self._rotacion_derecha(nodo)
-            else:
-                nodo.izquierda = self._rotacion_izquierda(nodo.izquierda)
-                return self._rotacion_derecha(nodo)
-        if balance < -1:
-            if sprint.fecha_fin > nodo.derecha.sprint.fecha_fin:
-                return self._rotacion_izquierda(nodo)
-            else:
-                nodo.derecha = self._rotacion_derecha(nodo.derecha)
-                return self._rotacion_izquierda(nodo)
-
-        return nodo
-
-    def _obtener_altura(self, nodo):
-        if not nodo:
-            return 0
-        return nodo.altura
-
-    def _obtener_balance(self, nodo):
-        if not nodo:
-            return 0
-        return self._obtener_altura(nodo.izquierda) - self._obtener_altura(nodo.derecha)
-
-    def _rotacion_izquierda(self, z):
-        y = z.derecha
-        T2 = y.izquierda
-        y.izquierda = z
-        z.derecha = T2
-        z.altura = 1 + max(self._obtener_altura(z.izquierda), self._obtener_altura(z.derecha))
-        y.altura = 1 + max(self._obtener_altura(y.izquierda), self._obtener_altura(y.derecha))
-        return y
-
-    def _rotacion_derecha(self, y):
-        x = y.izquierda
-        T2 = x.derecha
-        x.derecha = y
-        y.izquierda = T2
-        y.altura = 1 + max(self._obtener_altura(y.izquierda), self._obtener_altura(y.derecha))
-        x.altura = 1 + max(self._obtener_altura(x.izquierda), self._obtener_altura(x.derecha))
-        return x
-
-    def eliminar(self, fecha_fin):
-        if self.raiz:
-            self.raiz = self._eliminar(self.raiz, fecha_fin)
-
-    def _eliminar(self, nodo, fecha_fin):
-        if not nodo:
-            return nodo
-        elif fecha_fin < nodo.sprint.fecha_fin:
-            nodo.izquierda = self._eliminar(nodo.izquierda, fecha_fin)
-        elif fecha_fin > nodo.sprint.fecha_fin:
-            nodo.derecha = self._eliminar(nodo.derecha, fecha_fin)
-        else:
-            if not nodo.izquierda:
-                return nodo.derecha
-            elif not nodo.derecha:
-                return nodo.izquierda
-            temp = self._obtener_nodo_minimo(nodo.derecha)
-            nodo.sprint = temp.sprint
-            nodo.derecha = self._eliminar(nodo.derecha, temp.sprint.fecha_fin)
-
-        if not nodo:
-            return nodo
-
-        nodo.altura = 1 + max(self._obtener_altura(nodo.izquierda), self._obtener_altura(nodo.derecha))
-        balance = self._obtener_balance(nodo)
-        if balance > 1:
-            if self._obtener_balance(nodo.izquierda) >= 0:
-                return self._rotacion_derecha(nodo)
-            else:
-                nodo.izquierda = self._rotacion_izquierda(nodo.izquierda)
-                return self._rotacion_derecha(nodo)
-        if balance < -1:
-            if self._obtener_balance(nodo.derecha) <= 0:
-                return self._rotacion_izquierda(nodo)
-            else:
-                nodo.derecha = self._rotacion_derecha(nodo.derecha)
-                return self._rotacion_izquierda(nodo)
-
-        return nodo
-
-    def _obtener_nodo_minimo(self, nodo):
-        if nodo is None or nodo.izquierda is None:
-            return nodo
-        return self._obtener_nodo_minimo(nodo.izquierda)
-
-    def listar_sprints(self):
-        self._listar_sprints(self.raiz)
-
-    def _listar_sprints(self, nodo):
-        if nodo:
-            self._listar_sprints(nodo.izquierda)
-            print(nodo.sprint)
-            self._listar_sprints(nodo.derecha)
-
-class GestionSprints:
-    def __init__(self, archivo_datos):
-        self.archivo_datos = archivo_datos
-        self.arbol_avl = ArbolAVL()
-        self.cargar_datos()
-
-    def cargar_datos(self):
-        try:
-            with open(self.archivo_datos, 'r') as archivo:
-                datos = json.load(archivo)
-                for sprint_data in datos:
-                    sprint = self._dict_a_sprint(sprint_data)
-                    self.arbol_avl.insertar(sprint)
-        except FileNotFoundError:
-            pass
-
-    def guardar_datos(self):
-        sprints = []
-        self._guardar_datos(self.arbol_avl.raiz, sprints)
-        with open(self.archivo_datos, 'w') as archivo:
-            json.dump(sprints, archivo, indent=4)
-
-    def _guardar_datos(self, nodo, sprints):
-        if nodo:
-            sprints.append(nodo.sprint.to_dict())
-            self._guardar_datos(nodo.izquierda, sprints)
-            self._guardar_datos(nodo.derecha, sprints)
-
-    def _dict_a_sprint(self, datos):
-        sprint = Sprint(
-            datos["id"],
-            datos["nombre"],
-            datos["fecha_inicio"],
-            datos["fecha_fin"],
-            datos["estado"],
-            datos["objetivos"],
-            datos["equipo"]
-        )
-        for tarea_data in datos["tareas"]:
-            tarea = self._dict_a_tarea(tarea_data)
-            sprint.agregar_tarea(tarea)
-        return sprint
-
-    def _dict_a_tarea(self, datos):
-        tarea = Tarea(
-            datos["id"],
-            datos["nombre"],
-            datos["empresa"],
-            datos["descripcion"],
-            datos["fecha_inicio"],
-            datos["fecha_vencimiento"],
-            datos["estado"],
-            datos["porcentaje"]
-        )
-        for subtarea_data in datos["subtareas"]:
-            subtarea = self._dict_a_tarea(subtarea_data)
-            tarea.agregar_subtarea(subtarea)
-        return tarea
-
-    def agregar_sprint(self, sprint):
-        self.arbol_avl.insertar(sprint)
-        self.guardar_datos()
-
-    def modificar_sprint(self, id, nombre=None, fecha_inicio=None, fecha_fin=None, estado=None, objetivos=None, equipo=None):
-        sprint = self.buscar_sprint_por_id(id)
-        if sprint:
-            if nombre:
-                sprint.nombre = nombre
-            if fecha_inicio:
-                sprint.fecha_inicio = fecha_inicio
-            if fecha_fin:
-                sprint.fecha_fin = fecha_fin
-            if estado:
-                sprint.estado = estado
-            if objetivos:
-                sprint.objetivos = objetivos
-            if equipo:
-                sprint.equipo = equipo
-            self.guardar_datos()
+    def modificar_proyecto(self, id, **kwargs):
+        proyecto = self.buscar_proyectos('id', id)[0]
+        if proyecto:
+            for key, value in kwargs.items():
+                setattr(proyecto, key, value)
+            proyecto.actualizar_tiempo_restante()
             return True
         return False
 
-    def eliminar_sprint(self, id):
-        sprint = self.buscar_sprint_por_id(id)
-        if sprint:
-            self.arbol_avl.eliminar(sprint.fecha_fin)
-            self.guardar_datos()
-            return True
-        return False
+    def eliminar_proyecto(self, id):
+        # Implementación simplificada: reconstruir el árbol sin el proyecto eliminado
+        proyectos = self.listar_proyectos()
+        self.proyectos = ArbolAVL()
+        for proyecto in proyectos:
+            if proyecto.id != id:
+                self.proyectos.insertar_proyecto(proyecto)
+        return True
 
-    def buscar_sprint_por_id(self, id, nodo=None):
-        if nodo is None:
-            nodo = self.arbol_avl.raiz
-        if nodo is None:
-            return None
-        if nodo.sprint.id == id:
-            return nodo.sprint
-        elif id < nodo.sprint.id:
-            return self.buscar_sprint_por_id(id, nodo.izquierda)
+    def listar_proyectos(self):
+        return self.proyectos.buscar_proyecto('id', '')  # Retorna todos los proyectos
+
+    def actualizar_tiempos_restantes(self):
+        self.proyectos.actualizar_tiempo_restante()
+
+
+
+gestion_empresas = GestionEmpresas("empresas.csv")
+
+#Menú principal
+def menu_principal():
+    gestion_empresas = GestionEmpresas("empresas.csv")
+    while True:
+        print("\nMenu Principal")
+        print("1. Gestionar Empresas")
+        print("2. Gestionar Proyectos")
+        print("3. Salir")
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            menu_gestion_empresas(gestion_empresas)
+        elif opcion == '2':
+            menu_gestion_proyectos(gestion_empresas)
+        elif opcion == '3':
+            break
         else:
-            return self.buscar_sprint_por_id(id, nodo.derecha)
+            print("Opción no válida. Intente de nuevo.")
+            
+#Menú para opc 1
+def menu_gestion_empresas(gestion_empresas):
+    while True:
+        print("\nMenu de Gestión de Empresas")
+        print("1. Listar Empresas")
+        print("2. Agregar Empresa")
+        print("3. Modificar Empresa")
+        print("4. Eliminar Empresa")
+        print("5. Listar Proyectos de una Empresa")
+        print("6. Agregar Proyecto a una Empresa")
+        print("7. Volver al Menú Principal")
+        opcion = input("Seleccione una opción: ")
 
-    def listar_sprints(self):
-        self.arbol_avl.listar_sprints()
+        if opcion == '1':
+            gestion_empresas.listar_empresas()
+        elif opcion == '2':
+            agregar_empresa(gestion_empresas)
+        elif opcion == '3':
+            modificar_empresa(gestion_empresas)
+        elif opcion == '4':
+            eliminar_empresa(gestion_empresas)
+        elif opcion == '5':
+            listar_proyectos_empresa(gestion_empresas)
+        elif opcion == '6':
+            agregar_proyecto_empresa(gestion_empresas)
+        elif opcion == '7':
+            break
+        else:
+            print("Opción no válida. Intente de nuevo.")
 
-# Ejemplo de uso
-gestion_sprints = GestionSprints('datos_sprints.json')
-sprint1 = Sprint('1', 'Sprint 1', '2023-01-01', '2023-01-14', 'En progreso', 'Objetivo del Sprint 1', 'Equipo 1')
-tarea1 = Tarea('1', 'Tarea 1', 'Descripción de la tarea 1', '2023-01-01', '2023-01-10', 'En progreso', 'Messi')
-tarea2 = Tarea('2', 'Tarea 2', 'Descripción de la tarea 2', '2023-01-02', '2023-01-12', 'No iniciada', 'Ronaldo')
-sprint1.agregar_tarea(tarea1)
-sprint1.agregar_tarea(tarea2)
-gestion_sprints.agregar_sprint(sprint1)
-gestion_sprints.listar_sprints()
+def agregar_empresa(gestion_empresas):
+    try:
+        id = input("Ingresa el id de la empresa: ")
+        nombre = input("Ingresar el nombre de la empresa: ")
+        descripcion = input("Descripcion de la empresa: ")
+        fecha_creacion = input("Ingresa la fecha de creación (YYYY-MM-DD): ")
+        direccion = input("Ingrese la direccion de la empresa: ")
+        telefono = input("Ingrese el numero de telefono de la empresa: ")
+        correo = input("Ingrese el correo de la empresa: ")
+        gerente = input("Ingrese el gerente de la empresa: ")
+        equipo_contacto = input("Ingrese el equipo de contacto de la empresa: ")
 
-#5.- Modulo de Reportes-------------------------------------------------------------------------------------------------------------------------------------------------------------
-class GestionReportes:
-    def __init__(self, gestion_proyectos, gestion_tareas, gestion_sprints):
-        self.gestion_proyectos = gestion_proyectos
-        self.gestion_tareas = gestion_tareas
-        self.gestion_sprints = gestion_sprints
+        gestion_empresas.crear_empresa(id, nombre, descripcion, fecha_creacion, direccion, telefono, correo, gerente, equipo_contacto)
+        print("Empresa agregada con éxito.")
+    except Exception as e:
+        print(f"Ocurrió un error al agregar una empresa: {e}")
 
-def mostrar_menu():
-    print("Seleccione una opción:")
-    print("1. Identificar y mostrar tareas críticas")
-    print("2. Listar sprites de un proyecto en un nivel específico")
-    print("3. Listar tareas asignadas a un empleado")
-    print("4. Exportar tareas completadas a CSV")
-    print("0. Salir")
+def modificar_empresa(gestion_empresas):
+    id = input("Ingrese el ID de la empresa a modificar: ")
+    empresa = gestion_empresas.buscar_empresa(id)
+    if empresa:
+        print("Deje en blanco los campos que no desea modificar.")
+        nombre = input(f"Nuevo nombre ({empresa.nombre}): ") or empresa.nombre
+        descripcion = input(f"Nueva descripción ({empresa.descripcion}): ") or empresa.descripcion
+        direccion = input(f"Nueva dirección ({empresa.direccion}): ") or empresa.direccion
+        telefono = input(f"Nuevo teléfono ({empresa.telefono}): ") or empresa.telefono
+        correo = input(f"Nuevo correo ({empresa.correo}): ") or empresa.correo
+        gerente = input(f"Nuevo gerente ({empresa.gerente}): ") or empresa.gerente
+        equipo_contacto = input(f"Nuevo equipo de contacto ({empresa.equipo_contacto}): ") or empresa.equipo_contacto
 
-gestion_empresas = GestionEmpresas('empresas.csv')
-gestion_proyectos = GestionProyectos(gestion_empresas)
-
-while True:
-    mostrar_menu()
-    opcion = input("Opción: ")
-    if opcion == '1':
-        gestion_proyectos.identificar_tareas_criticas()
-    elif opcion == '2':
-        id_proyecto = input("Ingrese el ID del proyecto: ")
-        nivel = int(input("Ingrese el nivel del árbol: "))
-        gestion_proyectos.listar_sprites_nivel(id_proyecto, nivel)
-    elif opcion == '3':
-        cedula = input("Ingrese la cédula del empleado: ")
-        gestion_proyectos.listar_tareas_empleado(cedula)
-    elif opcion == '4':
-        id_proyecto = input("Ingrese el ID del proyecto: ")
-        duracion_max = int(input("Ingrese la duración máxima en horas: "))
-        gestion_proyectos.exportar_tareas_completadas(id_proyecto, duracion_max)
-    elif opcion == '0':
-        break
+        if gestion_empresas.modificar_empresa(id, nombre=nombre, descripcion=descripcion, direccion=direccion, 
+                                              telefono=telefono, correo=correo, gerente=gerente, equipo_contacto=equipo_contacto):
+            print("Empresa modificada con éxito.")
+        else:
+            print("No se pudo modificar la empresa.")
     else:
-        print("Opción no válida. Intente de nuevo.")
-                    
-                    
+        print("Empresa no encontrada.")
 
-# Ejemplo de uso
-gestion_reportes = GestionReportes(gestion_proyectos, gestion_tareas, gestion_sprints)
+def eliminar_empresa(gestion_empresas):
+    id = input("Ingrese el ID de la empresa a1 eliminar: ")
+    if gestion_empresas.eliminar_empresa(id):
+        print("Empresa eliminada con éxito.")
+    else:
+        print("No se pudo eliminar la empresa. Verifique el ID.")
 
+def listar_proyectos_empresa(gestion_empresas):
+    id = input("Ingrese el ID de la empresa para listar sus proyectos: ")
+    if gestion_empresas.listar_proyectos(id):
+        print("Listado de proyectos completado.")
+    else:
+        print("No se encontró la empresa o no tiene proyectos.")
+
+def agregar_proyecto_empresa(gestion_empresas):
+    id_empresa = input("Ingrese el ID de la empresa a la que desea agregar un proyecto: ")
+    id = input("Ingrese el ID del proyecto: ")
+    nombre_proyecto = input("Ingrese el nombre del proyecto: ")
+    descripcion_proyecto = input("Ingrese la descripción del proyecto: ")
+    fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
+    fecha_vencimiento = input("Ingrese la fecha de vencimiento (YYYY-MM-DD): ")
+    estado_actual = input("Ingrese el estado actual del proyecto: ")
+    gerente = input("Ingrese el nombre del gerente del proyecto: ")
+    equipo = input("Ingrese los miembros del equipo (separados por comas): ").split(',')
+
+    if gestion_empresas.agregar_proyecto(id_empresa, id, nombre_proyecto, descripcion_proyecto, fecha_inicio, fecha_vencimiento, estado_actual, gerente, equipo):
+        print("Proyecto agregado con éxito.")
+    else:
+        print("No se pudo agregar el proyecto. Verifique el ID de la empresa.")
+
+#Menú para el modulo 2
+def menu_gestion_proyectos(gestion_empresas):
+    while True:
+        print("\nMenu de Gestión de Proyectos")
+        print("1. Listar Proyectos")
+        print("2. Agregar Proyecto")
+        print("3. Modificar Proyecto")
+        print("4. Eliminar Proyecto")
+        print("5. Buscar Proyectos")
+        print("6. Actualizar Tiempos Restantes")
+        print("7. Volver al Menú Principal")
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            id_empresa = input("Ingrese el ID de la empresa: ")
+            gestion_empresas.listar_proyectos(id_empresa)
+        elif opcion == '2':
+            agregar_proyecto(gestion_empresas)
+        elif opcion == '3':
+            modificar_proyecto(gestion_empresas)
+        elif opcion == '4':
+            eliminar_proyecto(gestion_empresas)
+        elif opcion == '5':
+            buscar_proyectos(gestion_empresas)
+        elif opcion == '6':
+            gestion_empresas.gestion_proyectos.actualizar_tiempos_restantes()
+            print("Tiempos restantes actualizados.")
+        elif opcion == '7':
+            break
+        else:
+            print("Opción no válida. Intente de nuevo.")
+
+def agregar_proyecto(gestion_empresas):
+    id_empresa = input("Ingrese el ID de la empresa: ")
+    id = input("Ingrese el ID del proyecto: ")
+    nombre = input("Ingrese el nombre del proyecto: ")
+    descripcion = input("Ingrese la descripción del proyecto: ")
+    fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
+    fecha_vencimiento = input("Ingrese la fecha de vencimiento (YYYY-MM-DD): ")
+    estado_actual = input("Ingrese el estado actual del proyecto: ")
+    gerente = input("Ingrese el nombre del gerente del proyecto: ")
+    equipo = input("Ingrese los miembros del equipo (separados por comas): ").split(',')
+
+    if gestion_empresas.agregar_proyecto(id_empresa, id, nombre, descripcion, fecha_inicio, fecha_vencimiento, estado_actual, gerente, equipo):
+        print("Proyecto agregado con éxito.")
+    else:
+        print("No se pudo agregar el proyecto. Verifique el ID de la empresa.")
+
+def modificar_proyecto(gestion_empresas):
+    id = input("Ingrese el ID del proyecto a modificar: ")
+    # Implementar la lógica para modificar el proyecto
+
+def eliminar_proyecto(gestion_empresas):
+    id = input("Ingrese el ID del proyecto a eliminar: ")
+    if gestion_empresas.gestion_proyectos.eliminar_proyecto(id):
+        print("Proyecto eliminado con éxito.")
+    else:
+        print("No se pudo eliminar el proyecto. Verifique el ID.")
+
+def buscar_proyectos(gestion_empresas):
+    criterio = input("Ingrese el criterio de búsqueda (id, nombre, gerente, fecha_inicio, fecha_vencimiento, estado_actual): ")
+    valor = input("Ingrese el valor a buscar: ")
+    proyectos = gestion_empresas.gestion_proyectos.buscar_proyectos(criterio, valor)
+    for proyecto in proyectos:
+        print(proyecto)
+
+
+if __name__ == "__main__":
+    menu_principal()

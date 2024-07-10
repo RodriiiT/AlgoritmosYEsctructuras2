@@ -1,0 +1,6 @@
+id,nombre,descripción,fecha_creación,dirección,teléfono,correo,equipo_actual,selección_nacional
+1,Lionel Messi,Delantero argentino considerado uno de los mejores de la historia,2004-10-16,Miami FL USA,+1-305-555-0123,messi@example.com,Inter Miami CF,Argentina
+2,Cristiano Ronaldo,Delantero portugués con múltiples Balones de Oro,2002-08-14,Riyadh Saudi Arabia,+966-11-555-0124,ronaldo@example.com,Al Nassr FC,Portugal
+3,Kylian Mbappé,Joven estrella francesa conocida por su velocidad,2015-12-02,Paris France,+33-1-555-0125,mbappe@example.com,Paris Saint-Germain,Francia
+4,Erling Haaland,Delantero noruego con impresionante promedio de goles,2016-05-30,Manchester UK,+44-161-555-0126,haaland@example.com,Manchester City,Noruega
+5,Neymar Jr.,Habilidoso delantero brasileño,2009-03-07,Riyadh Saudi Arabia,+966-11-555-0127,neymar@example.com,Al Hilal SFC,Brasil

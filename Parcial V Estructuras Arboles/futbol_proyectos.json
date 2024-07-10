@@ -1,0 +1,122 @@
+{
+    "proyectos": [
+      {
+        "id": "P001",
+        "nombre": "Desarrollo de Jóvenes Talentos",
+        "descripcion": "Programa de entrenamiento intensivo para jugadores sub-21",
+        "fecha_inicio": "2024-08-01",
+        "fecha_vencimiento": "2025-07-31",
+        "estado_actual": "En progreso",
+        "empresa_cliente": "Inter Miami CF",
+        "gerente": "David Beckham",
+        "equipo": ["Phil Neville", "Victor Ulloa"],
+        "tareas": [
+          {
+            "id": "T001",
+            "nombre": "Evaluación inicial de jugadores",
+            "descripcion": "Realizar pruebas físicas y técnicas a los jugadores seleccionados",
+            "fecha_inicio": "2024-08-01",
+            "fecha_vencimiento": "2024-08-15",
+            "estado_actual": "Completado",
+            "porcentaje": 100,
+            "subtareas": [
+              {
+                "id": "ST001",
+                "nombre": "Pruebas físicas",
+                "descripcion": "Realizar pruebas de velocidad, resistencia y fuerza",
+                "fecha_inicio": "2024-08-01",
+                "fecha_vencimiento": "2024-08-07",
+                "estado_actual": "Completado",
+                "porcentaje": 100
+              },
+              {
+                "id": "ST002",
+                "nombre": "Pruebas técnicas",
+                "descripcion": "Evaluar habilidades con el balón y toma de decisiones",
+                "fecha_inicio": "2024-08-08",
+                "fecha_vencimiento": "2024-08-15",
+                "estado_actual": "Completado",
+                "porcentaje": 100
+              }
+            ]
+          },
+          {
+            "id": "T002",
+            "nombre": "Diseño de plan de entrenamiento personalizado",
+            "descripcion": "Crear planes de entrenamiento adaptados a cada jugador",
+            "fecha_inicio": "2024-08-16",
+            "fecha_vencimiento": "2024-08-31",
+            "estado_actual": "En progreso",
+            "porcentaje": 60,
+            "subtareas": []
+          }
+        ]
+      },
+      {
+        "id": "P002",
+        "nombre": "Optimización de Estrategias de Juego",
+        "descripcion": "Análisis y mejora de tácticas para la próxima temporada",
+        "fecha_inicio": "2024-09-01",
+        "fecha_vencimiento": "2024-12-31",
+        "estado_actual": "Planificado",
+        "empresa_cliente": "Manchester City",
+        "gerente": "Pep Guardiola",
+        "equipo": ["Juanma Lillo", "Rodolfo Borrell"],
+        "tareas": [
+          {
+            "id": "T003",
+            "nombre": "Análisis de partidos anteriores",
+            "descripcion": "Revisar y analizar los partidos de la temporada pasada",
+            "fecha_inicio": "2024-09-01",
+            "fecha_vencimiento": "2024-09-30",
+            "estado_actual": "No iniciado",
+            "porcentaje": 0,
+            "subtareas": []
+          },
+          {
+            "id": "T004",
+            "nombre": "Desarrollo de nuevas formaciones",
+            "descripcion": "Crear y probar nuevas formaciones tácticas",
+            "fecha_inicio": "2024-10-01",
+            "fecha_vencimiento": "2024-11-15",
+            "estado_actual": "No iniciado",
+            "porcentaje": 0,
+            "subtareas": []
+          }
+        ]
+      },
+      {
+        "id": "P003",
+        "nombre": "Mejora de Instalaciones de Entrenamiento",
+        "descripcion": "Actualización y expansión de las instalaciones de entrenamiento del club",
+        "fecha_inicio": "2024-10-01",
+        "fecha_vencimiento": "2025-03-31",
+        "estado_actual": "Planificado",
+        "empresa_cliente": "Paris Saint-Germain",
+        "gerente": "Luis Enrique",
+        "equipo": ["Rafel Pol", "Aitor Unzue"],
+        "tareas": [
+          {
+            "id": "T005",
+            "nombre": "Diseño de nuevos campos de entrenamiento",
+            "descripcion": "Planificar y diseñar nuevos campos con tecnología avanzada",
+            "fecha_inicio": "2024-10-01",
+            "fecha_vencimiento": "2024-11-30",
+            "estado_actual": "No iniciado",
+            "porcentaje": 0,
+            "subtareas": []
+          },
+          {
+            "id": "T006",
+            "nombre": "Implementación de sistema de análisis de rendimiento",
+            "descripcion": "Instalar cámaras y sensores para análisis detallado del rendimiento de los jugadores",
+            "fecha_inicio": "2024-12-01",
+            "fecha_vencimiento": "2025-02-28",
+            "estado_actual": "No iniciado",
+            "porcentaje": 0,
+            "subtareas": []
+          }
+        ]
+      }
+    ]
+  }

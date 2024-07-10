@@ -1,0 +1,25 @@
+{
+    "sprints": [
+        {
+            "id": 1,
+            "nombre": "Sprint 1",
+            "fecha_inicio": "2023-01-01",
+            "fecha_fin": "2023-01-15",
+            "estado": "completado",
+            "objetivos": "objetivo 1",
+            "equipo": ["miembro 1", "miembro 2"],
+            "tareas": [
+                {
+                    "id": 1,
+                    "nombre": "Tarea 1",
+                    "descripcion": "Descripción de la tarea 1",
+                    "fecha_inicio": "2023-01-01",
+                    "fecha_vencimiento": "2023-01-10",
+                    "estado": "completado",
+                    "encargado": "miembro 1",
+                    "subtareas": []
+                }
+            ]
+        }
+    ]
+}

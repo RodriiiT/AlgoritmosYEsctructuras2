@@ -1,0 +1,7 @@
+id,nombre,descripcion,fecha_creacion,direccion,telefono,correo,gerente,equipo_contacto,proyectos
+1,Lionel Messi,El goat,2024-02-04,Miami USA,0412364409,empresa@ujap.com,Inter Miami,Argentina,
+2,Cristiano Ronaldo,Delantero portugués con múltiples Balones de Oro,2002-08-14,Riyadh Saudi Arabia,+966-11-555-0124,ronaldo@example.com,Al Nassr FC,Portugal,
+3,Kylian Mbappé,Joven estrella francesa conocida por su velocidad,2015-12-02,Paris France,+33-1-555-0125,mbappe@example.com,Paris Saint-Germain,Francia,
+4,Erling Haaland,Delantero noruego con impresionante promedio de goles,2016-05-30,Manchester UK,+44-161-555-0126,haaland@example.com,Manchester City,Noruega,
+5,Neymar Jr.,Habilidoso delantero brasileño,2009-03-07,Riyadh Saudi Arabia,+966-11-555-0127,neymar@example.com,Al Hilal SFC,Brasil,
+
